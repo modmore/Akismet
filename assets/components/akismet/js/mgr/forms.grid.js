@@ -49,19 +49,37 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
                 header: _('akismet.when'),
                 dataIndex: 'created_at',
                 sortable: true,
-                width: 100,
+                width: 60,
             },
             {
                 header: _('akismet.result'),
                 dataIndex: 'reported_status',
                 sortable: true,
-                width: 100,
+                width: 50,
             },
             {
                 header: _('akismet.corrected'),
                 dataIndex: 'manual_status',
                 sortable: true,
+                width: 50,
+            },
+            {
+                header: _('akismet.name'),
+                dataIndex: 'comment_author',
+                sortable: true,
                 width: 100,
+            },
+            {
+                header: _('akismet.email'),
+                dataIndex: 'comment_author_email',
+                sortable: true,
+                width: 100,
+            },
+            {
+                header: _('akismet.content'),
+                dataIndex: 'comment_content',
+                sortable: true,
+                width: 200,
             },
         ]
     }

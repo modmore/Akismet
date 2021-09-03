@@ -31,5 +31,7 @@ class Akismet {
             'assetsUrl' => $assetsUrl,
             'connectorUrl' => $assetsUrl.'connector.php'
         ], $config);
+
+        $this->modx->addPackage('akismet', $this->config['modelPath']);
     }
 }

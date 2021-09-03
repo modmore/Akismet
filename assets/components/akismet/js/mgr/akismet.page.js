@@ -21,7 +21,7 @@ Akismet.page.Home = function(config) {
 Ext.extend(Akismet.page.Home, MODx.Component,{
     getButtons: function() {
         var buttons = [{
-            text: 'Help',//_('help_ex'),
+            text: _('help_ex'),
             handler: this.loadHelpPane,
             scope: this,
             id: 'modx-abtn-help'
@@ -29,7 +29,7 @@ Ext.extend(Akismet.page.Home, MODx.Component,{
 
         if (!Akismet.config.has_donated) {
             buttons.push(['-', {
-                text: 'Donate',//_('akismet.donate'),
+                text: _('akismet.donate'),
                 handler: this.donate,
                 scope: this
             }]);

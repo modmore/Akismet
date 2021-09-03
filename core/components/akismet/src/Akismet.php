@@ -90,10 +90,6 @@ class Akismet {
         ];
 
         $form = $this->modx->newObject(\AkismetForm::class, $params);
-        if (!$form->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: '
-                . print_r($params, true));
-        }
 
         $client = new Client();
         $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/comment-check", [
@@ -101,15 +97,21 @@ class Akismet {
             'http_errors' => false
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
+        $errorMsg = 'Unable to save Akismet spam check data: ';
         if ($spamCheck === 'true') {
-            $this->modx->log(1,'spam!');
-            // it's spam!
+            $form->set('reported_status', 'spam');
+            if (!$form->save()) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, $errorMsg . print_r($params, true));
+            }
+            return true;
         }
         else {
-            $this->modx->log(1,'not spam!');
+            $form->set('reported_status', 'notspam');
+            if (!$form->save()) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, $errorMsg . print_r($params, true));
+            }
+            return false;
         }
-
-        return true;
     }
 
     public function submitSpam()
