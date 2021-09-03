@@ -18,6 +18,8 @@ $xpdo_meta_map['AkismetForm']= array (
   ),
   'fields' => 
   array (
+    'reported_status' => 'unknown',
+    'manual_status' => '',
     'blog' => '',
     'comment_type' => '',
     'comment_author' => '',
@@ -41,6 +43,22 @@ $xpdo_meta_map['AkismetForm']= array (
   ),
   'fieldMeta' => 
   array (
+    'reported_status' => 
+    array (
+      'dbtype' => 'enum',
+      'precision' => '\'unknown\',\'spam\',\'notspam\'',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'unknown',
+    ),
+    'manual_status' => 
+    array (
+      'dbtype' => 'enum',
+      'precision' => '\'\',\'spam\',\'notspam\'',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
     'blog' => 
     array (
       'dbtype' => 'varchar',
@@ -98,7 +116,7 @@ $xpdo_meta_map['AkismetForm']= array (
     'user_agent' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '20',
+      'precision' => '191',
       'phptype' => 'string',
       'null' => false,
       'default' => '',
@@ -161,15 +179,16 @@ $xpdo_meta_map['AkismetForm']= array (
     ),
     'comment_date_gmt' => 
     array (
-      'dbtype' => 'timestamp',
+      'dbtype' => 'datetime',
       'phptype' => 'string',
       'null' => true,
     ),
     'comment_modified_gmt' => 
     array (
-      'dbtype' => 'timestamp',
+      'dbtype' => 'datetime',
       'phptype' => 'string',
       'null' => true,
+      'default' => NULL,
     ),
     'honeypot_field' => 
     array (
@@ -195,6 +214,38 @@ $xpdo_meta_map['AkismetForm']= array (
   ),
   'indexes' => 
   array (
+    'reported_status' => 
+    array (
+      'alias' => 'reported_status',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'reported_status' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+    'manual_status' => 
+    array (
+      'alias' => 'manual_status',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'manual_status' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
     'comment_type' => 
     array (
       'alias' => 'comment_type',
