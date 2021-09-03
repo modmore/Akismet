@@ -21,18 +21,11 @@ class Akismet {
 
     /**
      * @throws InvalidAPIKeyException
-     * @throws xPDOException
      */
-    public function __construct(modX $modx, fiHooks $hook)
+    public function __construct(modX $modx)
     {
         $this->modx = $modx;
-        $this->hook = $hook;
         $this->apiKey = $this->_loadAPIKey();
-
-        // Load xPDO package
-        if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
-            throw new xPDOException('Unable to load Akismet xPDO package!');
-        }
     }
 
     /**
@@ -59,8 +52,15 @@ class Akismet {
         return $fields;
     }
 
-    public function checkSpam(): bool
+    public function checkSpam(fiHooks $hook): bool
     {
+        $this->hook = $hook;
+
+        // Load xPDO package
+        if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
+            throw new xPDOException('Unable to load Akismet xPDO package!');
+        }
+
         $fields = $this->getFields();
 
         $permalink = $this->modx->makeUrl(
@@ -114,14 +114,34 @@ class Akismet {
         }
     }
 
-    public function submitSpam()
+    public function submitSpam($params): bool
     {
-
+        $client = new Client();
+        $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-spam", [
+            'form_params' => $params,
+            'http_errors' => false
+        ]);
+        if ($akismetCheck->getHeader('X-akismet-alert-code')) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-    public function submitHam()
+    public function submitHam($params): bool
     {
-
+        $client = new Client();
+        $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-ham", [
+            'form_params' => $params,
+            'http_errors' => false
+        ]);
+        if ($akismetCheck->getHeader('X-akismet-alert-code')) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 

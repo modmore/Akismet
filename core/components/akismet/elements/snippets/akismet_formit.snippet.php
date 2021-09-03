@@ -19,8 +19,8 @@ use modmore\Akismet\Akismet;
 use modmore\Akismet\Exceptions\InvalidAPIKeyException;
 
 try {
-    $akismet = new Akismet($modx, $hook);
-    if ($akismet->checkSpam()) {
+    $akismet = new Akismet($modx);
+    if ($akismet->checkSpam($hook)) {
         // Spam was found! Prevent form submission from continuing.
         return false;
     }
@@ -30,6 +30,8 @@ try {
 }
 catch(InvalidAPIKeyException $e) {
     $this->modx->log(modX::LOG_LEVEL_ERROR, 'Akismet API key not found. Please add it in the MODX system settings. Form is submitting without a spam check...');
+} catch (xPDOException $e) {
+    $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to load the Akismet xPDO package.');
 }
 
 // Make sure a missing API key doesn't prevent the form from submitting.

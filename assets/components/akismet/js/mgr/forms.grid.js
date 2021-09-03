@@ -36,6 +36,9 @@ Akismet.grid.Forms = function (config) {
         columns: this.getColumns()
     });
     Akismet.grid.Forms.superclass.constructor.call(this, config);
+    this.on('rowclick', function(grid, rowIndex, event) {
+        grid.handleClick(grid, rowIndex, event);
+    }, this);
 };
 Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
     getColumns: function() {
@@ -62,7 +65,7 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
                 header: _('akismet.override'),
                 dataIndex: 'manual_status',
                 sortable: true,
-                width: 80,
+                width: 50,
                 align: 'center',
                 renderer: this.renderOverrideStatus
             },
@@ -99,9 +102,9 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
     renderOverrideStatus: function(val, meta, rec) {
         if (val === '') {
             if (rec.get('reported_status') === 'spam') {
-                return '<button class="override-btn" data-mark-ham="true">' + _('akismet.mark_as_not_spam') + '</button>';
+                return '<button class="override-btn mark-ham">' + _('akismet.notspam') + '</button>';
             } else {
-                return '<button class="override-btn" data-mark-spam="true">' + _('akismet.mark_as_spam') + '</button>';
+                return '<button class="override-btn mark-spam">' + _('akismet.spam') + '</button>';
             }
         }
         else {
@@ -114,6 +117,18 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         }
     },
 
+    handleClick: function(grid, rowIndex, event) {
+        var elm = Ext.get(event.target);
+        if (elm.hasClass('mark-spam')) {
+            grid.markAsSpam(grid.getStore().getAt(rowIndex));
+        }
+        else if (elm.hasClass('mark-ham')) {
+            grid.markAsHam(grid.getStore().getAt(rowIndex));
+        }
+
+        return false;
+    },
+
     getMenu: function() {
         return [{
             text: _('akismet.form_view'),
@@ -124,14 +139,14 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         }];
     },
 
-    markAsSpam: function() {
+    markAsSpam: function(record) {
         MODx.msg.confirm({
             title: _('akismet.override_as_spam')
             ,text: _('akismet.confirm_override_as_spam')
             ,url: this.config.url
             ,params: {
                 action: 'mgr/forms/markspam'
-                ,id: this.menu.record.id
+                ,id: record.id
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -139,14 +154,14 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         });
     },
 
-    markAsHam: function() {
+    markAsHam: function(record) {
         MODx.msg.confirm({
             title: _('akismet.override_as_not_spam')
             ,text: _('akismet.confirm_override_as_not_spam')
             ,url: this.config.url
             ,params: {
                 action: 'mgr/forms/markham'
-                ,id: this.menu.record.id
+                ,id: record.id
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
