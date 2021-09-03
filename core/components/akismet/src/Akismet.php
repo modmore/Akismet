@@ -28,7 +28,7 @@ class Akismet {
         $this->modx = $modx;
         $this->hook = $hook;
         $this->apiKey = $this->_loadAPIKey();
-        $this->modx->log(1, dirname(__DIR__) . '/model/');
+
         // Load xPDO package
         if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
             throw new xPDOException('Unable to load Akismet xPDO package!');
@@ -38,7 +38,7 @@ class Akismet {
     /**
      * @throws InvalidAPIKeyException
      */
-    private function _loadAPIKey()
+    private function _loadAPIKey(): string
     {
         $apiKey = $this->modx->getOption('akismet.api_key');
         if (!$apiKey) {

@@ -15,7 +15,7 @@ Akismet.panel.Home = function(config) {
             defaults: { border: false, autoHeight: true },
             border: true,
             items: [{
-                title: _('akismet.forms'),
+                title: _('akismet.form_submissions'),
                 defaults: { autoHeight: true },
                 items: [{
                     html: '<p>' + _('akismet.description') + '</p>',

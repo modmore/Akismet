@@ -1,0 +1,24 @@
+.icon.icon-check {
+    color: #4bb543;
+}
+.icon.icon-bug {
+    color: #ff0000;
+}
+.override-btn {
+    background: #ffffff;
+    border: 0;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0, .15);
+    cursor: pointer;
+    margin: 0;
+    padding: 3px 6px;
+    width: 150px;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.override-btn:hover {
+    box-shadow: 1px 1px 2px 1px rgba(0,0,0, .30);
+}
+.overridden {
+    opacity: .5;
+    text-decoration: line-through;
+}
