@@ -31,6 +31,7 @@ class AkismetMarkHamUpdateProcessor extends modObjectUpdateProcessor {
         }
         if ($this->akismet->submitHam($params)) {
             $this->object->set('manual_status', 'notspam');
+            $this->object->set('updated_at', time());
         }
         return parent::beforeSave();
     }
