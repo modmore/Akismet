@@ -33,7 +33,32 @@ Akismet.grid.Forms = function (config) {
         remoteSort: true,
         anchor: '97%',
         autoExpandColumn: 'name',
-        columns: this.getColumns()
+        columns: this.getColumns(),
+        tbar:[{
+            xtype: 'textfield'
+            ,id: 'akismet-search-filter'
+            ,emptyText: _('akismet.search...')
+            ,listeners: {
+                'change': {
+                    fn:this.search,
+                    scope:this
+                }
+                ,'render': {fn: function(cmp) {
+                        new Ext.KeyMap(cmp.getEl(), {
+                            key: Ext.EventObject.ENTER
+                            ,fn: function() {
+                                this.fireEvent('change',this);
+                                this.blur();
+                                return true;
+                            }
+                            ,scope: cmp
+                        });
+                    },scope:this}
+            }
+        },{
+            text: '<i class="icon icon-close"></i>',
+            handler: this.refresh
+        }]
     });
     Akismet.grid.Forms.superclass.constructor.call(this, config);
     this.on('rowclick', function(grid, rowIndex, event) {

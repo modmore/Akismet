@@ -15,6 +15,7 @@ $_lang['akismet.donate'] = 'Donate';
 $_lang['akismet.unknown'] = 'Unknown';
 $_lang['akismet.spam'] = 'Spam';
 $_lang['akismet.notspam'] = 'Not Spam';
+$_lang['akismet.search'] = 'Search...';
 $_lang['akismet.form_view'] = 'View Form Submission';
 $_lang['akismet.remove_form_submission'] = 'Remove Form Submission';
 $_lang['akismet.confirm_remove_form_submission'] = 'Are you sure you want to remove this form submission. This will delete all data related to this form submission permanently.';

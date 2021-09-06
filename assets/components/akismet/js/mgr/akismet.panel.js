@@ -2,7 +2,6 @@ Akismet.panel.Home = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'akismet-panel-home',
-        border: false,
         baseCls: 'modx-formpanel',
         cls: "container",
         items: [{
@@ -11,15 +10,14 @@ Akismet.panel.Home = function(config) {
             border: true,
             cls: 'modx-page-header'
         },{
-            xtype: 'modx-tabs',
+            xtype: 'modx-panel',
             defaults: { border: false, autoHeight: true },
             border: true,
             items: [{
-                title: _('akismet.form_submissions'),
                 defaults: { autoHeight: true },
                 items: [{
                     html: '<p>' + _('akismet.description') + '</p>',
-                    border: false,
+                    cls: 'akismet-home-panel',
                     bodyCssClass: 'panel-desc',
                 },{
                     xtype: 'akismet-grid-forms'

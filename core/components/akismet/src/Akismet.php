@@ -2,9 +2,11 @@
 
 namespace modmore\Akismet;
 
+
 use modX;
 use xPDOException;
 use fiHooks;
+use LoginHooks;
 use modmore\Akismet\Exceptions\InvalidAPIKeyException;
 use GuzzleHttp\Client;
 
@@ -42,9 +44,18 @@ class Akismet {
 
     private function getFields(): array
     {
+        $config = [];
+        if (get_class($this->hook) === 'LoginHooks') {
+            $config = $this->hook->login->controller->config;
+        }
+        else if (get_class($this->hook) === 'fiHooks') {
+            $config = $this->hook->config;
+        }
+
         $values = $this->hook->getValues();
+
         $fields = [];
-        foreach ($this->hook->config as $key => $param) {
+        foreach ($config as $key => $param) {
             if (substr($key, 0, 7) === 'akismet') {
                 $fields[$key] = $values[$param];
             }
@@ -52,7 +63,13 @@ class Akismet {
         return $fields;
     }
 
-    public function checkSpam(fiHooks $hook): bool
+    /**
+     * @param fiHooks|LoginHooks $hook
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws xPDOException
+     */
+    public function checkSpam($hook): bool
     {
         $this->hook = $hook;
 
@@ -89,6 +106,8 @@ class Akismet {
             'honeypot_field' => $fields['akismetHoneypotField'] ?? '',
         ];
 
+        $this->modx->log(1, print_r($params, true));
+
         $form = $this->modx->newObject(\AkismetForm::class, $params);
 
         $client = new Client();
@@ -97,6 +116,7 @@ class Akismet {
             'http_errors' => false
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
+        $this->modx->log(1, $spamCheck);
         $errorMsg = 'Unable to save Akismet spam check data: ';
         if ($spamCheck === 'true') {
             $form->set('reported_status', 'spam');

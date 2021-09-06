@@ -20,8 +20,7 @@ class AkismetMarkSpamUpdateProcessor extends modObjectUpdateProcessor {
         return parent::initialize();
     }
 
-
-    public function beforeSave()
+    public function beforeSave(): bool
     {
         $params = $this->object->toArray();
         $remove = ['id', 'action', 'reported_status','manual_status'];
