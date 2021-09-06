@@ -82,7 +82,7 @@ $builder->package->put(
         'resolve' => array(
             array(
                 'type' => 'php',
-                'source' => $sources['resolvers'] . 'loadmodules.resolver.php',
+                'source' => $sources['resolvers'] . 'tables.resolver.php',
             )
         )
     ]
@@ -91,39 +91,93 @@ $modx->log(modX::LOG_LEVEL_INFO,'Packaged in core, requirements validator, and m
 
 /**
  * Assets
- *
- * If you have web-accessible assets in core/components/<package>/, then uncomment this section to package them too
  */
-//$builder->package->put(
-//    [
-//        'source' => $sources['source_assets'],
-//        'target' => "return MODX_ASSETS_PATH . 'components/';",
-//    ],
-//    [
-//        'vehicle_class' => 'xPDOFileVehicle',
-//    ]
-//);
-//$modx->log(modX::LOG_LEVEL_INFO,'Packaged in assets.'); flush();
+$builder->package->put(
+    [
+        'source' => $sources['source_assets'],
+        'target' => "return MODX_ASSETS_PATH . 'components/';",
+    ],
+    [
+        'vehicle_class' => 'xPDOFileVehicle',
+    ]
+);
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in assets.'); flush();
 
 /**
  * Settings
- *
- * If you have settings, uncomment this section to create them. See data/settings.php.
  */
-//$settings = include $sources['data'] . 'transport.settings.php';
-//if (is_array($settings)) {
-//    $attributes = [
-//        xPDOTransport::UNIQUE_KEY => 'key',
-//        xPDOTransport::PRESERVE_KEYS => true,
-//        xPDOTransport::UPDATE_OBJECT => false,
-//    ];
-//    foreach ($settings as $setting) {
-//        $vehicle = $builder->createVehicle($setting,$attributes);
-//        $builder->putVehicle($vehicle);
-//    }
-//    $modx->log(modX::LOG_LEVEL_INFO,'Packaged in ' . count($settings) . ' system settings.'); flush();
-//    unset($settings,$setting,$attributes);
-//}
+$settings = include $sources['data'] . 'transport.settings.php';
+if (is_array($settings)) {
+    $attributes = [
+        xPDOTransport::UNIQUE_KEY => 'key',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => false,
+    ];
+    foreach ($settings as $setting) {
+        $vehicle = $builder->createVehicle($setting,$attributes);
+        $builder->putVehicle($vehicle);
+    }
+    $modx->log(modX::LOG_LEVEL_INFO,'Packaged in ' . count($settings) . ' system settings.'); flush();
+    unset($settings,$setting,$attributes);
+}
+
+/**
+ * Menu
+ */
+$menu = include $sources['data'].'transport.menu.php';
+if (empty($menu)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
+} else {
+    $menuVehicle = $builder->createVehicle($menu, array(
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => true,
+        xPDOTransport::UNIQUE_KEY    => 'text'
+    ));
+    $builder->putVehicle($menuVehicle);
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in Menu');
+    unset($menuVehicle, $menu);
+}
+
+/**
+ * Category
+ */
+$category= $modx->newObject('modCategory');
+$category->set('category','Akismet');
+$modx->log(modX::LOG_LEVEL_INFO,'Created category.');
+
+/**
+ * Snippets
+ */
+$snippetSource = include $sources['data'].'snippets.php';
+$snippets = [];
+foreach($snippetSource as $name => $options) {
+    $snippets[$name] = $modx->newObject('modSnippet');
+    $snippets[$name]->fromArray([
+        'name' => $name,
+        'description' => $options['description'],
+        'snippet' => getSnippetContent($sources['source_core'].$options['file']),
+    ],'',true,true);
+}
+$category->addMany($snippets);
+unset($snippets);
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in snippets.');
+
+$attr = [
+    xPDOTransport::UNIQUE_KEY => 'category',
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => [
+        'Snippets' => [
+            xPDOTransport::PRESERVE_KEYS => false,
+            xPDOTransport::UPDATE_OBJECT => true,
+            xPDOTransport::UNIQUE_KEY => 'name',
+        ],
+    ]
+];
+
+$vehicle = $builder->createVehicle($category,$attr);
+$builder->putVehicle($vehicle);
 
 /* now pack in the license file, readme and setup options */
 $builder->setPackageAttributes([

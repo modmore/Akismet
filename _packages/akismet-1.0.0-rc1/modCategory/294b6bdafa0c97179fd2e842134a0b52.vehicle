@@ -1,0 +1,42 @@
+<?php return array (
+  'unique_key' => 'category',
+  'preserve_keys' => false,
+  'update_object' => true,
+  'related_objects' => 
+  array (
+    'Snippets' => 
+    array (
+      'b3418e77f3cd0ed866eb34277ad9b1d2' => 
+      array (
+        'preserve_keys' => false,
+        'update_object' => true,
+        'unique_key' => 'name',
+        'class' => 'modSnippet',
+        'object' => '{"id":null,"source":0,"property_preprocess":0,"name":"Akismet","description":null,"editor_type":0,"category":0,"cache_type":0,"snippet":"","locked":0,"properties":null,"moduleguid":"","static":0,"static_file":"","content":""}',
+        'guid' => '68dfd914fb85afecb21126d39d782a7d',
+        'native_key' => NULL,
+        'signature' => '88019ac9a3fe37e1f14e70b8cebaa8b6',
+      ),
+    ),
+  ),
+  'related_object_attributes' => 
+  array (
+    'Snippets' => 
+    array (
+      'preserve_keys' => false,
+      'update_object' => true,
+      'unique_key' => 'name',
+    ),
+  ),
+  'namespace' => 'akismet',
+  'resolve' => NULL,
+  'validate' => NULL,
+  'vehicle_package' => 'transport',
+  'vehicle_class' => 'xPDOObjectVehicle',
+  'guid' => '8198555e86f4fce534520deb8c3811bc',
+  'package' => 'modx',
+  'class' => 'modCategory',
+  'signature' => '294b6bdafa0c97179fd2e842134a0b52',
+  'native_key' => NULL,
+  'object' => '{"id":null,"parent":0,"category":"Akismet","rank":0}',
+);

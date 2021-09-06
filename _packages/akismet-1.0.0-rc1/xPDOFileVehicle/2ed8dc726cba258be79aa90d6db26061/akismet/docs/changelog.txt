@@ -1,0 +1,5 @@
+Akismet 1.0.0-rc1
+---------------------------------
+Released on
+
+- First release

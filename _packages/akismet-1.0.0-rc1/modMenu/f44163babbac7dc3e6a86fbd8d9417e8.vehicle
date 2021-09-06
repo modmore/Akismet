@@ -1,0 +1,16 @@
+<?php return array (
+  'preserve_keys' => true,
+  'update_object' => true,
+  'unique_key' => 'text',
+  'namespace' => 'akismet',
+  'resolve' => NULL,
+  'validate' => NULL,
+  'vehicle_package' => 'transport',
+  'vehicle_class' => 'xPDOObjectVehicle',
+  'guid' => '976bf6d96825ebc3da24c663af575d07',
+  'package' => 'modx',
+  'class' => 'modMenu',
+  'signature' => 'f44163babbac7dc3e6a86fbd8d9417e8',
+  'native_key' => 'akismet',
+  'object' => '{"text":"akismet","parent":"components","action":"home","description":"akismet.menu_desc","icon":"","menuindex":0,"params":"","handler":"","permissions":"","namespace":"akismet"}',
+);
