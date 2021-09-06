@@ -79,12 +79,16 @@ $builder->package->put(
                 'source' => $sources['validators'] . 'requirements.script.php'
             ]
         ],
-        'resolve' => array(
-            array(
+        'resolve' => [
+            [
+                'type' => 'php',
+                'source' => $sources['resolvers'] . 'dependencies.resolver.php',
+            ],
+            [
                 'type' => 'php',
                 'source' => $sources['resolvers'] . 'tables.resolver.php',
-            )
-        )
+            ],
+        ]
     ]
 );
 $modx->log(modX::LOG_LEVEL_INFO,'Packaged in core, requirements validator, and module loading resolver.'); flush();
