@@ -159,7 +159,7 @@ foreach($snippetSource as $name => $options) {
     $snippets[$name]->fromArray([
         'name' => $name,
         'description' => $options['description'],
-        'snippet' => getSnippetContent($sources['source_core'].$options['file']),
+        'snippet' => getSnippetContent($sources['snippets'].$options['file']),
     ],'',true,true);
 }
 $category->addMany($snippets);

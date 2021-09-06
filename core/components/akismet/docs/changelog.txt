@@ -1,5 +1,5 @@
 Akismet 1.0.0-rc1
 ---------------------------------
-Released on
+Released on 2021-09-06
 
 - First release

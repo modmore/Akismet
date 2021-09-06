@@ -40,3 +40,10 @@ $_lang['akismet.charset'] = 'Site Charset';
 $_lang['akismet.site_lang'] = 'Language';
 $_lang['akismet.recheck_reason'] = 'Recheck Reason';
 $_lang['akismet.updated_at'] = 'Updated at';
+
+// Settings
+$_lang['setting_akismet.api_key'] = 'API Key';
+$_lang['setting_akismet.api_key_desc'] = 'Enter your Akismet API Key here. The API Key will be emailed to you when you create an Akismet account.';
+$_lang['setting_akismet.assets_path'] = 'Assets Path';
+$_lang['setting_akismet.assets_url'] = 'Assets URL';
+$_lang['setting_akismet.core_path'] = 'Core Path';

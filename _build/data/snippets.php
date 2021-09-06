@@ -2,7 +2,7 @@
 
 return [
     'Akismet' => [
-        'name'          =>  'akismet',
-        'file'          =>  'akismet_hook.snippet.php',
+        'name' =>  'akismet',
+        'file' =>  'akismet_hook.snippet.php',
     ]
 ];
