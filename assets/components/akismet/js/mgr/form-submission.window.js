@@ -1,13 +1,18 @@
 Akismet.window.FormSubmission = function(config) {
     config = config || {};
+    var that = this;
 
     Ext.applyIf(config,{
         title: 'View Form Submission',
-        url: Akismet.config.connectorUrl,
-        action: 'mgr/form-submissions/update',
         autoHeight:true,
         modal: true,
         width: 800,
+        buttons: [{
+            text: _('close'),
+            handler: function() {
+                that.close();
+            }
+        }],
         fields: [{
             xtype: 'hidden',
             name: 'id'

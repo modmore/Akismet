@@ -31,6 +31,7 @@ class AkismetMarkSpamUpdateProcessor extends modObjectUpdateProcessor {
         }
         if ($this->akismet->submitSpam($params)) {
             $this->object->set('manual_status', 'spam');
+            $this->object->set('updated_at', time());
         }
         return parent::beforeSave();
     }
