@@ -2,7 +2,6 @@
 
 namespace modmore\Akismet;
 
-
 use modX;
 use xPDOException;
 use fiHooks;
@@ -15,7 +14,7 @@ class Akismet {
     /** @var modX $modx */
     public $modx;
 
-    /** @var fiHooks $hook */
+    /** @var fiHooks|LoginHooks $hook */
     private $hook;
 
     /** @var string $apiKey */
@@ -42,13 +41,17 @@ class Akismet {
         return $apiKey;
     }
 
+    /**
+     * Matches form values with specified field keys then returns
+     * @return array
+     */
     private function getFields(): array
     {
         $config = [];
-        if (get_class($this->hook) === 'LoginHooks') {
+        if ($this->hook instanceof LoginHooks) {
             $config = $this->hook->login->controller->config;
         }
-        else if (get_class($this->hook) === 'fiHooks') {
+        else if ($this->hook instanceof fiHooks) {
             $config = $this->hook->config;
         }
 
@@ -98,15 +101,13 @@ class Akismet {
             'comment_author_url' => $fields['akismetAuthorUrl'] ?? '',
             'comment_content' => $fields['akismetContent'] ?? '',
             'blog_charset' => $this->modx->getOption('modx_charset'),
-            'recheck_reason' => '',
+            'recheck_reason' => $fields['akismetRecheckReason'] ?? '',
             'user_role' => $fields['akismetUserRole'] ?? '',
             'is_test' => $fields['akismetTest'] ?? '',
             'comment_date_gmt' => gmdate("Y-m-d H:i:s", time()),
             'comment_modified_gmt' => NULL,
             'honeypot_field' => $fields['akismetHoneypotField'] ?? '',
         ];
-
-        $this->modx->log(1, print_r($params, true));
 
         $form = $this->modx->newObject(\AkismetForm::class, $params);
 
@@ -116,7 +117,7 @@ class Akismet {
             'http_errors' => false
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
-        $this->modx->log(1, $spamCheck);
+
         $errorMsg = 'Unable to save Akismet spam check data: ';
         if ($spamCheck === 'true') {
             $form->set('reported_status', 'spam');
@@ -134,7 +135,12 @@ class Akismet {
         }
     }
 
-    public function submitSpam($params): bool
+    /**
+     * @param array $params
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function submitSpam(array $params): bool
     {
         $client = new Client();
         $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-spam", [
@@ -149,7 +155,12 @@ class Akismet {
         }
     }
 
-    public function submitHam($params): bool
+    /**
+     * @param array $params
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function submitHam(array $params): bool
     {
         $client = new Client();
         $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-ham", [

@@ -2,35 +2,30 @@ Akismet.panel.Home = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'akismet-panel-home',
+        border: false,
         baseCls: 'modx-formpanel',
-        cls: "container",
+        cls: 'container',
+        layout: 'anchor',
         items: [{
             html: '<h2>' + _('akismet') + '</h2>',
-            defaults: { border: false, autoHeight: true },
-            border: true,
             cls: 'modx-page-header'
         },{
             xtype: 'modx-panel',
             defaults: { border: false, autoHeight: true },
-            border: true,
             items: [{
                 defaults: { autoHeight: true },
+                layout: 'anchor',
                 items: [{
                     html: '<p>' + _('akismet.description') + '</p>',
                     cls: 'akismet-home-panel',
                     bodyCssClass: 'panel-desc',
+                    items: []
                 },{
-                    xtype: 'akismet-grid-forms'
-                    ,cls: 'main-wrapper'
-                    ,preventRender: true
-                }],
-            }],
-            listeners: {
-                afterrender: function (tabPanel) {
-                    tabPanel.doLayout();
-                },
-            },
-        }],
+                    xtype: 'akismet-grid-form-submissions',
+                    cls: 'main-wrapper',
+                }]
+            }]
+        }]
     });
     Akismet.panel.Home.superclass.constructor.call(this,config);
 };

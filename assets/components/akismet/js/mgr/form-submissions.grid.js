@@ -1,9 +1,9 @@
-Akismet.grid.Forms = function (config) {
+Akismet.grid.FormSubmissions = function (config) {
     config = config || {};
     Ext.applyIf(config, {
-        id: 'akismet-grid-forms',
+        id: 'akismet-grid-form-submissions',
         url: Akismet.config.connectorUrl,
-        baseParams: { action: 'mgr/forms/getList' },
+        baseParams: { action: 'mgr/form-submissions/getList' },
         fields: [
             'id',
             'created_at',
@@ -31,41 +31,34 @@ Akismet.grid.Forms = function (config) {
         ],
         paging: true,
         remoteSort: true,
-        anchor: '97%',
-        autoExpandColumn: 'name',
+        autoExpandColumn: 'content',
+        autoHeight: true,
         columns: this.getColumns(),
         tbar:[{
-            xtype: 'textfield'
-            ,id: 'akismet-search-filter'
-            ,emptyText: _('akismet.search...')
-            ,listeners: {
-                'change': {
-                    fn:this.search,
-                    scope:this
-                }
-                ,'render': {fn: function(cmp) {
-                        new Ext.KeyMap(cmp.getEl(), {
-                            key: Ext.EventObject.ENTER
-                            ,fn: function() {
-                                this.fireEvent('change',this);
-                                this.blur();
-                                return true;
-                            }
-                            ,scope: cmp
-                        });
-                    },scope:this}
-            }
-        },{
-            text: '<i class="icon icon-close"></i>',
-            handler: this.refresh
+            xtype: 'akismet-field-search',
+            emptyText: _('akismet.search'),
+            width: 400,
+            grid: this
         }]
     });
-    Akismet.grid.Forms.superclass.constructor.call(this, config);
+    Akismet.grid.FormSubmissions.superclass.constructor.call(this, config);
+
+    this.on('render', function() {
+        this.mask = new Ext.LoadMask(this.getEl());
+        if (!this.loaded) this.mask.show();
+    }, this);
+
+    this.getStore().on('load', function(s) {
+        this.loaded = true;
+        if (this.mask) this.mask.hide();
+    }, this);
+
     this.on('rowclick', function(grid, rowIndex, event) {
         grid.handleClick(grid, rowIndex, event);
     }, this);
+
 };
-Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
+Ext.extend(Akismet.grid.FormSubmissions, MODx.grid.Grid, {
     getColumns: function() {
         return [
             {
@@ -77,20 +70,24 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
                 header: _('akismet.when'),
                 dataIndex: 'created_at',
                 sortable: true,
-                width: 60,
+                fixed: true,
+                width: 140,
             },
             {
-                header: _('akismet.result'),
+                header: _('akismet.analysis'),
                 dataIndex: 'reported_status',
+                fixed: true,
                 sortable: true,
-                width: 50,
+                width: 100,
                 renderer: this.renderReportedStatus
             },
             {
                 header: _('akismet.override'),
                 dataIndex: 'manual_status',
+                id: 'override-col',
+                fixed: true,
                 sortable: true,
-                width: 50,
+                width: 100,
                 align: 'center',
                 renderer: this.renderOverrideStatus
             },
@@ -115,6 +112,13 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         ]
     },
 
+    search: function (tf, nv, ov) {
+        var s = this.getStore();
+        s.baseParams.query = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    },
+
     renderReportedStatus: function(val, meta, rec) {
         if (rec.get('manual_status') !== '') {
             return '<span class="overridden">' + _('akismet.' + val) + '</span>';
@@ -133,12 +137,9 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
             }
         }
         else {
-            if (val === 'spam') {
-                return '<i class="icon icon-bug"></i> ' + '&nbsp;' + _('akismet.' + val);
-            }
-            else {
-                return '<i class="icon icon-check"></i> ' + '&nbsp;' + _('akismet.' + val);
-            }
+            var iconType = val === 'spam' ? 'bug' : 'check';
+            return '<span class="override-span"><i class="icon icon-' + iconType + '"></i> '
+                + '&nbsp;' + _('akismet.' + val) + '</span>';
         }
     },
 
@@ -157,7 +158,7 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
     getMenu: function() {
         return [{
             text: _('akismet.form_view'),
-            handler: this.viewForm
+            handler: this.viewFormSubmission
         },'-',{
             text: _('akismet.remove_form_submission'),
             handler: this.removeForm
@@ -168,9 +169,10 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         MODx.msg.confirm({
             title: _('akismet.override_as_spam')
             ,text: _('akismet.confirm_override_as_spam')
+                + '<div class="akismet-notice">' + _('akismet.override_notice') + '</div>'
             ,url: this.config.url
             ,params: {
-                action: 'mgr/forms/markspam'
+                action: 'mgr/form-submissions/markspam'
                 ,id: record.id
             }
             ,listeners: {
@@ -183,9 +185,10 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         MODx.msg.confirm({
             title: _('akismet.override_as_not_spam')
             ,text: _('akismet.confirm_override_as_not_spam')
+                + '<div class="akismet-notice">' + _('akismet.override_notice') + '</div>'
             ,url: this.config.url
             ,params: {
-                action: 'mgr/forms/markham'
+                action: 'mgr/form-submissions/markham'
                 ,id: record.id
             }
             ,listeners: {
@@ -194,13 +197,27 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         });
     },
 
+    viewFormSubmission: function(btn, e) {
+        if (!this.menu.record || !this.menu.record.id) return false;
+        var formSubmission = MODx.load({
+            xtype: 'akismet-window-form-submission'
+            ,record: this.menu.record
+            ,listeners: {
+                'success': {fn:function() { this.refresh(); },scope:this}
+            }
+        });
+        formSubmission.fp.getForm().reset();
+        formSubmission.fp.getForm().setValues(this.menu.record);
+        formSubmission.show(e.target);
+    },
+
     removeForm: function() {
         MODx.msg.confirm({
             title: _('akismet.remove_form_submission')
             ,text: _('akismet.confirm_remove_form_submission')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/forms/remove'
+                action: 'mgr/form-submissions/remove'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -209,4 +226,50 @@ Ext.extend(Akismet.grid.Forms, MODx.grid.Grid, {
         });
     }
 });
-Ext.reg('akismet-grid-forms', Akismet.grid.Forms);
+Ext.reg('akismet-grid-form-submissions', Akismet.grid.FormSubmissions);
+
+/**
+ * @param config
+ * @constructor
+ */
+Akismet.field.Search = function(config) {
+    config = config || {};
+    var grid = config.grid || null
+
+    Ext.applyIf(config, {
+        xtype: 'trigger',
+        name: 'query',
+        emptyText: _('akismet.search'),
+        width: 250,
+        ctCls: 'akismet-search',
+        onTriggerClick: function() {
+            this.reset();
+            this.fireEvent('click');
+        },
+        listeners: {
+            'render': {
+                fn: function(cmp) {
+                    new Ext.KeyMap(cmp.getEl(), {
+                        key: Ext.EventObject.ENTER,
+                        fn: function() {
+                            grid.search(this);
+                            return true;
+                        },
+                        scope: cmp
+                    });
+                },
+                scope:grid
+            },
+            'click': {
+                fn: function(trigger) {
+                    grid.getStore().setBaseParam('query', '');
+                    grid.getStore().load();
+                },
+                scope: grid
+            }
+        }
+    });
+    Akismet.field.Search.superclass.constructor.call(this,config);
+};
+Ext.extend(Akismet.field.Search, Ext.form.TriggerField);
+Ext.reg('akismet-field-search', Akismet.field.Search);

@@ -9,6 +9,7 @@ Ext.extend(Akismet, Ext.Component, {
     tree: {},
     panel: {},
     combo: {},
+    field: {},
     config: {},
 });
 Ext.reg('akismet', Akismet);
