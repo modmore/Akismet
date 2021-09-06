@@ -68,7 +68,7 @@ class Akismet {
 
     /**
      * @param fiHooks|LoginHooks $hook
-     * @return bool
+     * @return bool True if spam, false if not.
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws xPDOException
      */
@@ -118,21 +118,13 @@ class Akismet {
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
 
-        $errorMsg = 'Unable to save Akismet spam check data: ';
-        if ($spamCheck === 'true') {
-            $form->set('reported_status', 'spam');
-            if (!$form->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, $errorMsg . print_r($params, true));
-            }
-            return true;
+        $form->set('reported_status', $spamCheck === 'true' ? 'spam' : 'notspam');
+        
+        if (!$form->save()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: ' . print_r($params, true));
         }
-        else {
-            $form->set('reported_status', 'notspam');
-            if (!$form->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, $errorMsg . print_r($params, true));
-            }
-            return false;
-        }
+        
+        return $form->get('reported_status') === 'spam';
     }
 
     /**
