@@ -25,5 +25,10 @@ class AkismetFormGetListProcessor extends modObjectGetListProcessor {
         }
         return $c;
     }
+
+    public function prepareRow(xPDOObject $object)
+    {
+        return filter_var_array($object->toArray(), FILTER_SANITIZE_STRING);
+    }
 }
 return 'AkismetFormGetListProcessor';
