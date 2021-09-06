@@ -43,7 +43,7 @@ Configurable Fields
 Since Akismet was originally developed for Wordpress, it accepts fields that are related to comments on blog posts, 
 such as `comment_author`, `comment_author_email` and `comment_content`.
 
-Since MODX allows any naming convention for fields, you can set the names as snippet parameters. This works with both FormIt and Register.
+MODX allows any naming convention for fields, so you can set the field names you're using as snippet parameters. This works with both FormIt and Register.
 
 Say for example, you have a contact form with the following fields: `name`, `email` and `message`. 
 You can set these to the fields that the Akismet service is expecting. See this code example:
