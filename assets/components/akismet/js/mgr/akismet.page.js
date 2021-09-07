@@ -14,7 +14,7 @@ Akismet.page.Home = function(config) {
             cls: 'container',
             xtype: 'akismet-panel-home'
         }],
-        //buttons: this.getButtons(config)
+        buttons: this.getButtons(config)
     });
     Akismet.page.Home.superclass.constructor.call(this,config);
 };
