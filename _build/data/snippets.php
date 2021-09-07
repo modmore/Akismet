@@ -2,7 +2,7 @@
 
 return [
     'Akismet' => [
-        'name' =>  'akismet',
+        'description' => 'Advanced spam-protection for FormIt and Register.',
         'file' =>  'akismet_hook.snippet.php',
     ]
 ];
