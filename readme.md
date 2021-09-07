@@ -1,4 +1,5 @@
-##Akismet: Spam Protection for MODX
+Akismet: Spam Protection for MODX
+=
 
 Developed by [modmore](https://modmore.com)
 
