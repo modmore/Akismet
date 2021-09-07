@@ -21,12 +21,17 @@ class Akismet {
     private $apiKey;
 
     /**
-     * @throws InvalidAPIKeyException
+     * @throws InvalidAPIKeyException|xPDOException
      */
     public function __construct(modX $modx)
     {
         $this->modx = $modx;
         $this->apiKey = $this->_loadAPIKey();
+        $this->modx->lexicon->load('akismet:default');
+        // Load xPDO package
+        if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
+            throw new xPDOException('Unable to load Akismet xPDO package!');
+        }
     }
 
     /**
@@ -70,16 +75,10 @@ class Akismet {
      * @param fiHooks|LoginHooks $hook
      * @return bool True if spam, false if not.
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws xPDOException
      */
     public function checkSpam($hook): bool
     {
         $this->hook = $hook;
-
-        // Load xPDO package
-        if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
-            throw new xPDOException('Unable to load Akismet xPDO package!');
-        }
 
         $fields = $this->getFields();
 
