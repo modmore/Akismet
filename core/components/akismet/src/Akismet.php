@@ -65,7 +65,8 @@ class Akismet {
         $fields = [];
         foreach ($config as $key => $param) {
             if (substr($key, 0, 7) === 'akismet') {
-                $fields[$key] = $values[$param];
+                // Either grab the submitted value for the provided param, or return the param itself to read the config
+                $fields[$key] = $values[$param] ?? $param;
             }
         }
         return $fields;
