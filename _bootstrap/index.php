@@ -67,6 +67,24 @@ if (!createObject('modSystemSetting', array(
     echo "Error creating akismet.assets_url setting.\n";
 }
 
+if (!createObject('modMenu', array(
+    'text' => 'akismet',
+    'parent' => 'components',
+    'action' => 'home',
+    'description' => 'akismet.menu_desc',
+    'namespace' => 'akismet',
+), 'text', false)) {
+    echo "Error creating modMenu.\n";
+}
+
+if (!createObject('modSnippet', array(
+    'name' => 'Akismet',
+    'static' => true,
+    'static_file' => $componentPath . '/_build/elements/snippets/akismet_hook.snippet.php',
+), 'name', false)) {
+    echo "Error creating modMenu.\n";
+}
+
 
 $settings = include dirname(__DIR__) . '/_build/data/settings.php';
 foreach ($settings as $key => $opts) {
@@ -91,6 +109,14 @@ foreach ($settings as $key => $opts) {
 
 // Make sure our module can be loaded. In this case we're using a composer-provided PSR4 autoloader.
 include $componentPath . '/core/components/akismet/vendor/autoload.php';
+
+$ak = new modmore\Akismet\Akismet($modx);
+if (!$modx->addPackage('akismet', $componentPath . '/core/components/akismet/model/')) {
+    echo "! Failed loading akismet package\n";
+}
+
+$manager = $modx->getManager();
+$manager->createObjectContainer(AkismetForm::class);
 
 // Clear the cache
 $modx->cacheManager->refresh();
