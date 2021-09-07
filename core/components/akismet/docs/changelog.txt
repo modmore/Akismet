@@ -1,5 +1,5 @@
-Akismet 1.0.0-rc1
+Akismet 1.0.0-pl
 ---------------------------------
-Released on 2021-09-06
+Released on 2021-09-07
 
 - First release
