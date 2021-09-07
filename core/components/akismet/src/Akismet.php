@@ -116,14 +116,19 @@ class Akismet {
             'http_errors' => false
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
+        $isSpam = $spamCheck === 'true';
 
-        $form->set('reported_status', $spamCheck === 'true' ? 'spam' : 'notspam');
-        
+        $form->set('reported_status', $isSpam ? 'spam' : 'notspam');
         if (!$form->save()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: ' . print_r($params, true));
         }
-        
-        return $form->get('reported_status') === 'spam';
+
+        if ($isSpam) {
+            $this->setError($fields['akismetError'] ?? '');
+        }
+
+
+        return $isSpam;
     }
 
     /**
@@ -166,5 +171,18 @@ class Akismet {
         }
     }
 
+    private function setError($message)
+    {
+        if (empty($message)) {
+            $message = $this->modx->lexicon('akismet.message_blocked');
+        }
+
+        if ($this->hook instanceof LoginHooks) {
+            $this->hook->addError('akismet', $message);
+        }
+        elseif ($this->hook instanceof fiHooks) {
+            $this->hook->addError('akismet', $message);
+        }
+    }
 
 }

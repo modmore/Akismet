@@ -41,6 +41,9 @@ $_lang['akismet.site_lang'] = 'Language';
 $_lang['akismet.recheck_reason'] = 'Recheck Reason';
 $_lang['akismet.updated_at'] = 'Updated at';
 
+// Front-end default
+$_lang['akismet.message_blocked'] = 'Your message was blocked by our spam filter. If this was incorrect, please contact customer support.';
+
 // Settings
 $_lang['setting_akismet.api_key'] = 'API Key';
 $_lang['setting_akismet.api_key_desc'] = 'Enter your Akismet API Key here. The API Key will be emailed to you when you create an Akismet account.';
