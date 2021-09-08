@@ -91,7 +91,7 @@ class Akismet {
         $params = [
             'blog' => $this->modx->getOption('site_url'),
             'blog_lang' => $this->modx->getOption('cultureKey'),
-            'user_ip' => $_SERVER['REMOTE_ADDR'],
+            'user_ip' => $this->getIpAddress(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
             'referrer' => $_SERVER['HTTP_REFERER'],
             'permalink' => $permalink,
@@ -184,6 +184,23 @@ class Akismet {
         elseif ($this->hook instanceof fiHooks) {
             $this->hook->addError('akismet', $message);
         }
+    }
+
+    private function getIpAddress()
+    {
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = array_map('trim', $ips);
+            $ip = $ips[0];
+        }
+        else {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        }
+
+        $ip = filter_var($ip, FILTER_VALIDATE_IP);
+        $ip = ($ip === false) ? '::1' : $ip;
+
+        return $ip;
     }
 
 }

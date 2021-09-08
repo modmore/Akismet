@@ -1,3 +1,5 @@
+- Support proxied IP addresses with X-Forwarded-For header [#3]
+
 Akismet 1.0.0-pl
 ---------------------------------
 Released on 2021-09-07
