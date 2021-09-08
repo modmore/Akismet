@@ -198,9 +198,8 @@ class Akismet {
         }
 
         $ip = filter_var($ip, FILTER_VALIDATE_IP);
-        $ip = ($ip === false) ? '::1' : $ip;
 
-        return $ip;
+        return $ip === false ? '::1' : $ip;
     }
 
 }
