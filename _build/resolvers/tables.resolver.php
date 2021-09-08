@@ -14,6 +14,7 @@ if ($transport->xpdo) {
             $modx->addPackage('akismet', $modelPath);
             $manager = $modx->getManager();
             $manager->createObjectContainer(AkismetForm::class);
+            $manager->alterField(AkismetForm::class, 'user_ip');
             break;
     }
 }

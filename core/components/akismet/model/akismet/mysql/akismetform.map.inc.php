@@ -108,7 +108,7 @@ $xpdo_meta_map['AkismetForm']= array (
     'user_ip' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '20',
+      'precision' => '50',
       'phptype' => 'string',
       'null' => false,
       'default' => '',
