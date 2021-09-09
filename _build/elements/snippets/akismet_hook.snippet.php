@@ -32,13 +32,13 @@ try {
     return true;
 }
 catch(InvalidAPIKeyException $e) {
-    $this->modx->log(modX::LOG_LEVEL_ERROR, 'Akismet API key not found. Please add it in the MODX system settings. Form is submitting without a spam check...');
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Akismet API key not found. Please add it in the MODX system settings. Form is submitting without a spam check...');
 }
 catch (GuzzleException $e) {
-    $this->modx->log(modX::LOG_LEVEL_ERROR, $e->getMessage() . ': ' . $e->getTraceAsString());
+    $modx->log(modX::LOG_LEVEL_ERROR, $e->getMessage() . ': ' . $e->getTraceAsString());
 }
 catch (xPDOException $e) {
-    $this->modx->log(modX::LOG_LEVEL_ERROR, $e->getMessage() . ': ' . $e->getTraceAsString());
+    $modx->log(modX::LOG_LEVEL_ERROR, $e->getMessage() . ': ' . $e->getTraceAsString());
 }
 
 // Make sure an exception doesn't prevent the form from submitting.
