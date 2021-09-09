@@ -22,22 +22,22 @@ Install Akismet via the [modmore package provider](https://modmore.com/about/pac
 
 Usage with FormIt
 -
-Within your FormIt snippet call, add `akismet` as one of your hooks. Preferably the first one, as to prevent other hooks running if spam is detected.
+Within your FormIt snippet call, add `Akismet` as one of your hooks. Preferably the first one, as to prevent other hooks running if spam is detected.
 
 ```
 [[!FormIt? 
-    &hooks=`akismet,email,redirect`
+    &hooks=`Akismet,email,redirect`
     ...
 ]]
 ```
 
 Usage with Login
 -
-Within your Register snippet call, add `akismet` as one of your *preHooks*.
+Within your Register snippet call, add `Akismet` as one of your *preHooks*.
 
 ```
 [[!Register?
-    &preHooks=`akismet`
+    &preHooks=`Akismet`
     ...
 ]]
 ```
@@ -54,7 +54,7 @@ You can set these to the fields that the Akismet service is expecting. See this 
 
 ```
 [[!FormIt? 
-    &hooks=`akismet,email,redirect`
+    &hooks=`Akismet,email,redirect`
     &akismetAuthor=`name`
     &akismetAuthorEmail=`email`
     &akismetContent=`message`
