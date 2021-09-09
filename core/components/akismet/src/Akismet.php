@@ -65,6 +65,23 @@ class Akismet {
         $fields = [];
         foreach ($config as $key => $param) {
             if (substr($key, 0, 7) === 'akismet') {
+
+                // Check for any commas, and if so combine fields
+                if (strpos($param, ',') !== false) {
+                    $pieces = explode(',', $param);
+                    $pieces = array_map('trim', $pieces);
+                    $param = '';
+                    foreach ($pieces as $k => $piece) {
+                        $param .= $values[$piece];
+
+                        // Only add a space if it's not the last iteration.
+                        end($pieces);
+                        if ($k !== key($pieces)) {
+                            $param .= ' ';
+                        }
+                    }
+                }
+
                 // Either grab the submitted value for the provided param, or return the param itself to read the config
                 $fields[$key] = $values[$param] ?? $param;
             }

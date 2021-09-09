@@ -78,3 +78,16 @@ You can set these to the fields that the Akismet service is expecting. See this 
 - `&akismetHoneypotField` - If you use a hidden honeypot field in your form, set the name of it here.
 - `&akismetRecheckReason` - If you have a form where the same submission needs to be checked more than once, include the reason for it here.
 - `&akismetError` - The error message to set when the form failed the spam check. By default, this will use the `akismet.message_blocked` lexicon, which you may edit via System > Lexicon Management > akismet (select in the namespace dropdown), or you can provide the snippet property with a different message entirely. 
+
+Combining Fields
+-
+
+Perhaps your web form has separate fields for a persons first name and last name. Many do! Akismet expects a single author 
+field however, so from v1.1 onwards, you can combine fields by adding the field names together separated by commas.
+
+For example:
+
+```
+&akismetAuthor=`first_name,last_name`
+&akismetContent=`main_content_field,another_content_field`
+```
