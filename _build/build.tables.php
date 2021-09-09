@@ -30,6 +30,10 @@ foreach ($tables as $object) {
     }
 }
 
+$manager->addField(\AkismetForm::class, 'honeypot_field_name');
+$manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
+$manager->addField(\AkismetForm::class, 'honeypot_field_value');
+$manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
 
 $modx->log(modX::LOG_LEVEL_INFO, 'Complete!');
 if (!XPDO_CLI_MODE) {

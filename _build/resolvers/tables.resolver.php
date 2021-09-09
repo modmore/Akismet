@@ -14,7 +14,13 @@ if ($transport->xpdo) {
             $modx->addPackage('akismet', $modelPath);
             $manager = $modx->getManager();
             $manager->createObjectContainer(AkismetForm::class);
+
             $manager->alterField(AkismetForm::class, 'user_ip');
+
+            $manager->addField(\AkismetForm::class, 'honeypot_field_name');
+            $manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
+            $manager->addField(\AkismetForm::class, 'honeypot_field_value');
+            $manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
             break;
     }
 }

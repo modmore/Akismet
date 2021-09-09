@@ -69,6 +69,12 @@ class Akismet {
                 $fields[$key] = $values[$param] ?? $param;
             }
         }
+
+        // If a honeypot field is in use, add the field name
+        if ($config['akismetHoneypotField']) {
+            $fields['honeypot_field_name'] = $config['akismetHoneypotField'];
+        }
+
         return $fields;
     }
 
@@ -105,9 +111,14 @@ class Akismet {
             'user_role' => $fields['akismetUserRole'] ?? '',
             'is_test' => $fields['akismetTest'] ?? '',
             'comment_date_gmt' => gmdate("Y-m-d H:i:s", time()),
-            'comment_modified_gmt' => NULL,
-            'honeypot_field' => $fields['akismetHoneypotField'] ?? '',
+            'comment_modified_gmt' => NULL
         ];
+
+        // If a honeypot field is in use, include the name and value
+        if ($fields['akismetHoneypotField']) {
+            $params['honeypot_field_name'] = $fields['honeypot_field_name'];
+            $params[$fields['honeypot_field_name']] = $fields['akismetHoneypotField'];
+        }
 
         $form = $this->modx->newObject(\AkismetForm::class, $params);
 
@@ -120,6 +131,7 @@ class Akismet {
         $isSpam = $spamCheck === 'true';
 
         $form->set('reported_status', $isSpam ? 'spam' : 'notspam');
+        $form->set('honeypot_field_value', $fields['akismetHoneypotField']);
         if (!$form->save()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: ' . print_r($params, true));
         }
@@ -139,6 +151,11 @@ class Akismet {
      */
     public function submitSpam(array $params): bool
     {
+        if ($params['honeypot_field_name']) {
+            $params[$params['honeypot_field_name']] = $params['honeypot_field_value'];
+            unset($params['honeypot_field_value']);
+        }
+
         $client = new Client();
         $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-spam", [
             'form_params' => $params,
@@ -159,6 +176,11 @@ class Akismet {
      */
     public function submitHam(array $params): bool
     {
+        if ($params['honeypot_field_name']) {
+            $params[$params['honeypot_field_name']] = $params['honeypot_field_value'];
+            unset($params['honeypot_field_value']);
+        }
+
         $client = new Client();
         $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/submit-ham", [
             'form_params' => $params,

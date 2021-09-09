@@ -37,7 +37,8 @@ $xpdo_meta_map['AkismetForm']= array (
     'is_test' => 0,
     'comment_date_gmt' => NULL,
     'comment_modified_gmt' => NULL,
-    'honeypot_field' => '',
+    'honeypot_field_name' => '',
+    'honeypot_field_value' => '',
     'created_at' => 'CURRENT_TIMESTAMP',
     'updated_at' => NULL,
   ),
@@ -190,7 +191,15 @@ $xpdo_meta_map['AkismetForm']= array (
       'null' => true,
       'default' => NULL,
     ),
-    'honeypot_field' => 
+    'honeypot_field_name' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '191',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'honeypot_field_value' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '191',
@@ -470,15 +479,31 @@ $xpdo_meta_map['AkismetForm']= array (
         ),
       ),
     ),
-    'honeypot_field' => 
+    'honeypot_field_name' => 
     array (
-      'alias' => 'honeypot_field',
+      'alias' => 'honeypot_field_name',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'honeypot_field' => 
+        'honeypot_field_name' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
+    'honeypot_field_value' => 
+    array (
+      'alias' => 'honeypot_field_value',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'honeypot_field_value' => 
         array (
           'length' => '',
           'collation' => 'A',

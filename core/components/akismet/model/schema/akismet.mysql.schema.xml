@@ -20,7 +20,8 @@
         <field key="is_test" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0" />
         <field key="comment_date_gmt" dbtype="datetime" phptype="string" null="true" />
         <field key="comment_modified_gmt" dbtype="datetime" phptype="string" null="true" default="NULL" />
-        <field key="honeypot_field" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
+        <field key="honeypot_field_name" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
+        <field key="honeypot_field_value" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
         <field key="created_at" dbtype="timestamp" phptype="timestamp" null="false" default="CURRENT_TIMESTAMP" />
         <field key="updated_at" dbtype="timestamp" phptype="timestamp" null="true" />
 
@@ -72,8 +73,11 @@
         <index alias="comment_modified_gmt" name="comment_modified_gmt" primary="false" unique="false" type="BTREE">
             <column key="comment_modified_gmt" length="" collation="A" null="true" />
         </index>
-        <index alias="honeypot_field" name="honeypot_field" primary="false" unique="false" type="BTREE">
-            <column key="honeypot_field" length="" collation="A" null="true" />
+        <index alias="honeypot_field_name" name="honeypot_field_name" primary="false" unique="false" type="BTREE">
+            <column key="honeypot_field_name" length="" collation="A" null="true" />
+        </index>
+        <index alias="honeypot_field_value" name="honeypot_field_value" primary="false" unique="false" type="BTREE">
+            <column key="honeypot_field_value" length="" collation="A" null="true" />
         </index>
         <index alias="created_at" name="created_at" primary="false" unique="false" type="BTREE">
             <column key="created_at" length="" collation="A" null="false" />
