@@ -27,11 +27,14 @@ try {
     switch (get_class($hook)) {
         case fiHooks::class:
             $config = $hook->config;
+            $values = $hook->getValues();
             break;
         case LoginHooks::class:
             $config = $hook->login->controller->config;
+            $values = $hook->getValues();
             break;
         case quipHooks::class:
+            $values = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $config = $hook->quip->config;
             break;
         default:
@@ -39,7 +42,7 @@ try {
             return true;
     }
 
-    if ($akismet->checkSpam($hook->getValues(), $config)) {
+    if ($akismet->checkSpam($values, $config)) {
         // Spam was found! Prevent form submission from continuing.
         $message = $config['akismetError'] ?? $modx->lexicon('akismet.message_blocked');
         $hook->addError('akismet', $message);
