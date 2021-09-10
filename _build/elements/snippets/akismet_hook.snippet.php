@@ -1,15 +1,15 @@
 <?php
 /**
- * Akismet Spam Protection Hook for the FormIt and Login MODX extras.
+ * Akismet Spam Protection Hook for the FormIt, Login, and Quip MODX extras.
  * https://akismet.com
  *
  * Copyright 2021 by modmore
  * https://modmore.com
  *
- * This snippet integrates Akismet spam protection as a FormIt or Login (Register snippet) hook.
+ * This snippet integrates Akismet spam protection as a FormIt, Login (Register snippet), or Quip hook.
  *
  * @var modX $modx
- * @var fiHooks|LoginHooks $hook
+ * @var fiHooks|LoginHooks|quipHooks $hook
  *
  */
 
@@ -30,6 +30,9 @@ try {
             break;
         case LoginHooks::class:
             $config = $hook->login->controller->config;
+            break;
+        case quipHooks::class:
+            $config = $hook->quip->config;
             break;
         default:
             $modx->log(modX::LOG_LEVEL_ERROR, '[Akismet] Invalid hook provided when attempting to analyse spam. Submitting form without a spam check...');
