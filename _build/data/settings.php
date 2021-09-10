@@ -17,4 +17,8 @@ return [
         'area' => 'authentication',
         'value' => '',
     ],
+    'cleanup_days_old' => [
+        'area' => 'configuration',
+        'value' => '30',
+    ],
 ];

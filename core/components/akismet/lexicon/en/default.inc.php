@@ -50,3 +50,5 @@ $_lang['setting_akismet.api_key_desc'] = 'Enter your Akismet API Key here. The A
 $_lang['setting_akismet.assets_path'] = 'Assets Path';
 $_lang['setting_akismet.assets_url'] = 'Assets URL';
 $_lang['setting_akismet.core_path'] = 'Core Path';
+$_lang['setting_akismet.cleanup_days_old'] = 'Clean Up Old Records';
+$_lang['setting_akismet.cleanup_days_old_desc'] = 'Akismet will remove records older than the number of days set here. A value of 0 will prevent records from ever being removed.';

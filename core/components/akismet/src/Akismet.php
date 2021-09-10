@@ -2,6 +2,8 @@
 
 namespace modmore\Akismet;
 
+use DateInterval;
+use DateTime;
 use modX;
 use xPDOException;
 use fiHooks;
@@ -157,6 +159,7 @@ class Akismet {
             $this->setError($fields['akismetError'] ?? '');
         }
 
+        $this->cleanup();
 
         return $isSpam;
     }
@@ -241,4 +244,43 @@ class Akismet {
         return $ip === false ? '::1' : $ip;
     }
 
+    /**
+     * Timestamps a file and attempts to clean up old records every 24 hours.
+     */
+    private function cleanup()
+    {
+        $path = $this->modx->getOption('akismet.core_path') . '.cleanup';
+        if (!file_exists($path)) {
+            file_put_contents($path, time());
+            return;
+        }
+
+        // If the last cleanup was over 24 hours ago, run again.
+        $lastRun = (int) file_get_contents($path);
+        if (!empty($lastRun) and $lastRun < (time() - 86400)) {
+            $this->removeOldRecords();
+            file_put_contents($path, time());
+        }
+    }
+
+    /**
+     * Removes any records older than the number of days set in the system setting.
+     */
+    private function removeOldRecords()
+    {
+        $days = (int) trim($this->modx->getOption('akismet.cleanup_days_old', null, '',true));
+        if ($days > 0) {
+            $now = new DateTime();
+            $then = $now->sub(DateInterval::createFromDateString("{$days} days"));
+            $deleteBefore = $then->format('Y-m-d H:i:s');
+
+            if ($deleteBefore) {
+                $count = $this->modx->removeCollection(\AkismetForm::class, [
+                    'created_at:<' => $deleteBefore
+                ]);
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[Akismet] Cleaned up ' . $count
+                    . ' spam analysis records from before ' . date('Y-m-d H:i:s', $deleteBefore));
+            }
+        }
+    }
 }
