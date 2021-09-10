@@ -39,7 +39,7 @@ class AkismetHomeManagerController extends modExtraManagerController
 
     public function getTemplateFile()
     {
-        return $this->akismet->config['templates_path'] . 'home.tpl';
+        return $this->akismet->config['templatesPath'] . 'home.tpl';
     }
 
 }

@@ -8,7 +8,7 @@
         <field key="comment_author" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
         <field key="comment_author_email" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
         <field key="comment_author_url" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
-        <field key="comment_content" dbtype="text" phptype="string" null="false" />
+        <field key="comment_content" dbtype="text" phptype="string" null="true" />
         <field key="user_ip" dbtype="varchar" precision="50" phptype="string" null="false" default="" />
         <field key="user_agent" dbtype="varchar" precision="191" phptype="string" null="false" default="" />
         <field key="referrer" dbtype="varchar" precision="191" phptype="string" null="false" default="" />

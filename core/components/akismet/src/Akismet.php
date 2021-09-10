@@ -6,8 +6,6 @@ use DateInterval;
 use DateTime;
 use modX;
 use xPDOException;
-use fiHooks;
-use LoginHooks;
 use modmore\Akismet\Exceptions\InvalidAPIKeyException;
 use GuzzleHttp\Client;
 
@@ -16,8 +14,11 @@ class Akismet {
     /** @var modX $modx */
     public $modx;
 
-    /** @var fiHooks|LoginHooks $hook */
-    private $hook;
+    /** @var array $values */
+    private $values;
+
+    /** @var array $hookConfig */
+    private $hookConfig;
 
     /** @var string $apiKey */
     private $apiKey;
@@ -54,27 +55,16 @@ class Akismet {
      */
     private function getFields(): array
     {
-        $config = [];
-        if ($this->hook instanceof LoginHooks) {
-            $config = $this->hook->login->controller->config;
-        }
-        else if ($this->hook instanceof fiHooks) {
-            $config = $this->hook->config;
-        }
-
-        $values = $this->hook->getValues();
-
         $fields = [];
-        foreach ($config as $key => $param) {
+        foreach ($this->hookConfig as $key => $param) {
             if (substr($key, 0, 7) === 'akismet') {
-
                 // Check for any commas, and if so combine fields
                 if (strpos($param, ',') !== false) {
                     $pieces = explode(',', $param);
                     $pieces = array_map('trim', $pieces);
                     $param = '';
                     foreach ($pieces as $k => $piece) {
-                        $param .= $values[$piece];
+                        $param .= $this->values[$piece];
 
                         // Only add a space if it's not the last iteration.
                         end($pieces);
@@ -85,29 +75,56 @@ class Akismet {
                 }
 
                 // Either grab the submitted value for the provided param, or return the param itself to read the config
-                $fields[$key] = $values[$param] ?? $param;
+                $fields[$key] = $this->values[$param] ?? $param;
             }
         }
 
         // If a honeypot field is in use, add the field name
-        if ($config['akismetHoneypotField']) {
-            $fields['honeypot_field_name'] = $config['akismetHoneypotField'];
+        if ($this->hookConfig['akismetHoneypotField']) {
+            $fields['honeypot_field_name'] = $this->hookConfig['akismetHoneypotField'];
         }
 
         return $fields;
     }
 
     /**
-     * @param fiHooks|LoginHooks $hook
+     * @param $values
+     * @param null $hookConfig Hook config
      * @return bool True if spam, false if not.
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function checkSpam($hook): bool
+    public function checkSpam($values, $hookConfig = NULL): bool
     {
-        $this->hook = $hook;
+        $this->values = $values;
+        $this->hookConfig = $hookConfig;
 
-        $fields = $this->getFields();
+        $params = $this->getParams();
 
+        $client = new Client();
+        $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/comment-check", [
+            'form_params' => $params,
+            'http_errors' => false
+        ]);
+        $spamCheck = (string)$akismetCheck->getBody()->getContents();
+        $isSpam = $spamCheck === 'true';
+
+        $form = $this->modx->newObject(\AkismetForm::class, $params);
+        $form->set('reported_status', $isSpam ? 'spam' : 'notspam');
+        if (!$form->save()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: ' . print_r($params, true));
+        }
+
+        $this->cleanup();
+
+        return $isSpam;
+    }
+
+    /**
+     * Retrieves parameters to be used for both the API request and the database record.
+     * @return array
+     */
+    private function getParams(): array
+    {
         $permalink = $this->modx->makeUrl(
             $this->modx->resource->get('id'),
             $this->modx->resource->get('context_key'),
@@ -120,48 +137,56 @@ class Akismet {
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
             'referrer' => $_SERVER['HTTP_REFERER'],
             'permalink' => $permalink,
-            'comment_type' => $fields['akismetType'] ?? '',
-            'comment_author' => $fields['akismetAuthor'] ?? '',
-            'comment_author_email' => $fields['akismetAuthorEmail'] ?? '',
-            'comment_author_url' => $fields['akismetAuthorUrl'] ?? '',
-            'comment_content' => $fields['akismetContent'] ?? '',
             'blog_charset' => $this->modx->getOption('modx_charset'),
-            'recheck_reason' => $fields['akismetRecheckReason'] ?? '',
-            'user_role' => $fields['akismetUserRole'] ?? '',
-            'is_test' => $fields['akismetTest'] ?? '',
             'comment_date_gmt' => gmdate("Y-m-d H:i:s", time()),
-            'comment_modified_gmt' => NULL
+            'comment_modified_gmt' => NULL,
         ];
 
-        // If a honeypot field is in use, include the name and value
-        if ($fields['akismetHoneypotField']) {
-            $params['honeypot_field_name'] = $fields['honeypot_field_name'];
-            $params[$fields['honeypot_field_name']] = $fields['akismetHoneypotField'];
+        // If a $hookConfig array is present, we assume a hook is being used.
+        if ($this->hookConfig) {
+
+            $fields = $this->getFields();
+
+            $params = array_merge($params, [
+                'comment_type' => $fields['akismetType'] ?? '',
+                'comment_author' => $fields['akismetAuthor'] ?? '',
+                'comment_author_email' => $fields['akismetAuthorEmail'] ?? '',
+                'comment_author_url' => $fields['akismetAuthorUrl'] ?? '',
+                'comment_content' => $fields['akismetContent'] ?? '',
+                'recheck_reason' => $fields['akismetRecheckReason'] ?? '',
+                'user_role' => $fields['akismetUserRole'] ?? '',
+                'is_test' => $fields['akismetTest'] ?? '',
+            ]);
+
+            // If a honeypot field is in use, include the name and value
+            if ($fields['akismetHoneypotField']) {
+                $params['honeypot_field_name'] = $fields['honeypot_field_name'];
+                $params['honeypot_field_value'] = $fields['akismetHoneypotField'];
+                $params[$fields['honeypot_field_name']] = $fields['akismetHoneypotField'];
+            }
         }
 
-        $form = $this->modx->newObject(\AkismetForm::class, $params);
+        // If there is no $hookConfig specified then we assume a custom script is being used, and use values directly.
+        else {
+            $params = array_merge($params, [
+                'comment_type' => $this->values['comment_type'] ?? '',
+                'comment_author' => $this->values['comment_author'] ?? '',
+                'comment_author_email' => $this->values['comment_author_email'] ?? '',
+                'comment_author_url' => $this->values['comment_author_url'] ?? '',
+                'comment_content' => $this->values['comment_content'] ?? '',
+                'recheck_reason' => $this->values['recheck_reason'] ?? '',
+                'user_role' => $this->values['user_role'] ?? '',
+                'is_test' => $this->values['is_test'] ?? '',
+            ]);
 
-        $client = new Client();
-        $akismetCheck = $client->post("https://{$this->apiKey}.rest.akismet.com/1.1/comment-check", [
-            'form_params' => $params,
-            'http_errors' => false
-        ]);
-        $spamCheck = (string)$akismetCheck->getBody()->getContents();
-        $isSpam = $spamCheck === 'true';
-
-        $form->set('reported_status', $isSpam ? 'spam' : 'notspam');
-        $form->set('honeypot_field_value', $fields['akismetHoneypotField']);
-        if (!$form->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Unable to save Akismet spam check data: ' . print_r($params, true));
+            if ($this->values['honeypot_field_name']) {
+                $params['honeypot_field_name'] = $this->values['honeypot_field_name'] ?? '';
+                $params['honeypot_field_value'] = $this->values['honeypot_field_value'] ?? '';
+                $params[$this->values['honeypot_field_name']] = $this->values['honeypot_field_value'] ?? '';
+            }
         }
 
-        if ($isSpam) {
-            $this->setError($fields['akismetError'] ?? '');
-        }
-
-        $this->cleanup();
-
-        return $isSpam;
+        return $params;
     }
 
     /**
@@ -211,20 +236,6 @@ class Akismet {
         }
         else {
             return true;
-        }
-    }
-
-    private function setError($message)
-    {
-        if (empty($message)) {
-            $message = $this->modx->lexicon('akismet.message_blocked');
-        }
-
-        if ($this->hook instanceof LoginHooks) {
-            $this->hook->addError('akismet', $message);
-        }
-        elseif ($this->hook instanceof fiHooks) {
-            $this->hook->addError('akismet', $message);
         }
     }
 

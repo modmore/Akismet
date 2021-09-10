@@ -23,8 +23,24 @@ use modmore\Akismet\Exceptions\InvalidAPIKeyException;
 
 try {
     $akismet = new Akismet($modx);
-    if ($akismet->checkSpam($hook)) {
+
+    switch (get_class($hook)) {
+        case fiHooks::class:
+            $config = $hook->config;
+            break;
+        case LoginHooks::class:
+            $config = $hook->login->controller->config;
+            break;
+        default:
+            $modx->log(modX::LOG_LEVEL_ERROR, '[Akismet] Invalid hook provided when attempting to analyse spam. Submitting form without a spam check...');
+            return true;
+    }
+
+    if ($akismet->checkSpam($hook->getValues(), $config)) {
         // Spam was found! Prevent form submission from continuing.
+        $message = $config['akismetError'] ?? $modx->lexicon('akismet.message_blocked');
+        $hook->addError('akismet', $message);
+
         return false;
     }
 
