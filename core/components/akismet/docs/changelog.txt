@@ -6,7 +6,7 @@ Released on ...
 - Fix errors not being logged correctly from within the snippet.
 - Add support for compound fields [#4]
 - Automatically remove records after a specified time period [#5]
--
+- Refactor Akismet class to allow for compatibility with snippets/scripts [#7]
 
 Akismet 1.0.1-pl
 ---------------------------------
