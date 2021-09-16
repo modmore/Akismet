@@ -53,7 +53,7 @@ try {
     // No spam, keep going!
     return true;
 }
-catch(InvalidAPIKeyException $e) {
+catch (InvalidAPIKeyException $e) {
     $modx->log(modX::LOG_LEVEL_ERROR, 'Akismet API key not found. Please add it in the MODX system settings. Form is submitting without a spam check...');
 }
 catch (GuzzleException $e) {
