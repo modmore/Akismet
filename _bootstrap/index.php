@@ -118,6 +118,14 @@ if (!$modx->addPackage('akismet', $componentPath . '/core/components/akismet/mod
 $manager = $modx->getManager();
 $manager->createObjectContainer(AkismetForm::class);
 
+
+$manager->alterField(AkismetForm::class, 'user_ip');
+
+$manager->addField(\AkismetForm::class, 'honeypot_field_name');
+$manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
+$manager->addField(\AkismetForm::class, 'honeypot_field_value');
+$manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
+
 // Clear the cache
 $modx->cacheManager->refresh();
 
