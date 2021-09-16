@@ -9,9 +9,9 @@ Introduction
 [Akismet](https://akismet.com/) is an advanced spam protection service that uses AI to analyse form submissions. It learns from spam patterns around the web in real-time, and is extremely effective at blocking spam without hindering the user experience with CAPTCHAs.
 
 Originally developed for Wordpress, this open source package integrates Akismet with the MODX extras
-[FormIt](https://docs.modx.com/current/en/extras/formit/index) and [Login](https://docs.modx.com/current/en/extras/login/index) (specifically the [Register](https://docs.modx.com/current/en/extras/login/login.register) snippet).
+[FormIt](https://docs.modx.com/current/en/extras/formit), [Login](https://docs.modx.com/current/en/extras/login) (specifically the [Register](https://docs.modx.com/current/en/extras/login/login.register) snippet), and [Quip](https://docs.modx.com/current/en/extras/quip).
 
-The provided MODX snippet ***akismet*** is used as a *[hook](https://docs.modx.com/3.x/en/extras/formit/formit.hooks)* with FormIt, and a *[preHook](https://docs.modx.com/3.x/en/extras/login/login.tutorials/using-pre-and-post-hooks)* with Register.
+The provided MODX snippet ***Akismet*** is used as a *[hook](https://docs.modx.com/3.x/en/extras/formit/formit.hooks)* with FormIt, and a *[preHook](https://docs.modx.com/3.x/en/extras/login/login.tutorials/using-pre-and-post-hooks)* with Register and Quip. Note that hooks for Quip are not documented, but you can add `&preHooks` to the [QuipReply snippet](https://docs.modx.com/current/en/extras/quip/quip.quipreply).  
 
 Akismet is free for personal sites or blogs, and requires a paid subscription for use on commercial websites. [Learn more about Akismet's subscription model](https://akismet.com/plans/).  
 
@@ -42,12 +42,23 @@ Within your Register snippet call, add `Akismet` as one of your *preHooks*.
 ]]
 ```
 
+Usage with Quip
+-
+Within your QuipReply snippet call, add `Akismet` as one of your *preHooks*.
+
+```
+[[!QuipReply?
+    &preHooks=`Akismet`
+    ...
+]]
+```
+
 Configurable Fields
 -
 Since Akismet was originally developed for Wordpress, it accepts fields that are related to comments on blog posts, 
 such as `comment_author`, `comment_author_email` and `comment_content`.
 
-MODX allows any naming convention for fields, so you **set the field names you're using as snippet parameters**. This works with both FormIt and Register.
+MODX allows any naming convention for fields, so you **set the field names you're using as snippet parameters**. This works with FormIt, Register and Quip. 
 
 Say for example, you have a contact form with the following fields: `name`, `email` and `message`. 
 You can set these to the fields that the Akismet service is expecting. See this code example:
@@ -91,3 +102,12 @@ For example:
 &akismetAuthor=`first_name,last_name`
 &akismetContent=`main_content_field,another_content_field`
 ```
+
+Automatic Cleanup
+-
+
+By default, Akismet will remove spam checks that are more than 30 days old. This period can be adjusted with the `akismet.cleanup_days_old` system setting. 
+
+To disable automatic cleanup, set `akismet.cleanup_days_old` to `0`. 
+
+The cleanup does not require a cron job. It stores a timestamp in `core/components/akismet/.cleanup` and reads that every time a spam check is performed. If it's been more than the configured days since a cleanup happened, it will remove old checks right at that time.

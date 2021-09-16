@@ -1,6 +1,6 @@
 Akismet 1.1.0-pl
 ---------------------------------
-Released on ...
+Released on 2021-09-16
 
 - Fix honeypot implementation. [#2]
 - Fix errors not being logged correctly from within the snippet.
