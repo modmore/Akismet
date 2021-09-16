@@ -7,7 +7,7 @@ Released on ...
 - Add support for compound fields [#4]
 - Automatically remove records after a specified time period [#5]
 - Refactor Akismet class to allow for compatibility with snippets/scripts [#7]
-- Make Akismet compatible with Quip. Needs to be a postHook on the QuipReply snippet. [#6]
+- Make Akismet compatible with Quip. Needs to be a preHook on the QuipReply snippet. [#6]
 - If you want to see the raw parameters sent to Akismet and the verdict, set the akismet.debug system setting to 1.
 
 Akismet 1.0.1-pl
