@@ -17,7 +17,7 @@ class Akismet {
     /** @var array $values */
     private $values;
 
-    /** @var array $hookConfig */
+    /** @var array|null $hookConfig */
     private $hookConfig;
 
     /** @var string $apiKey */
@@ -88,12 +88,14 @@ class Akismet {
     }
 
     /**
-     * @param $values
-     * @param null $hookConfig Hook config
+     * @param array $values An array of submitted values.
+     * @param array|null $hookConfig Configuration from a hook/calling snippet.
+     *      When provided an array, will be used to read field names (&akismetAuthor=`author_field_name`, etc).
+     *      When null, $values should have the akismet field names (comment_author, comment_content, etc)
      * @return bool True if spam, false if not.
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function checkSpam($values, $hookConfig = NULL): bool
+    public function checkSpam(array $values, $hookConfig = null): bool
     {
         $this->values = $values;
         $this->hookConfig = $hookConfig;
@@ -106,6 +108,11 @@ class Akismet {
             'http_errors' => false
         ]);
         $spamCheck = (string)$akismetCheck->getBody()->getContents();
+
+        if ($this->modx->getOption('akismet.debug')) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Akismet verdict "' . $spamCheck . " for parameters: " . print_r($params, true));
+        }
+
         $isSpam = $spamCheck === 'true';
 
         $form = $this->modx->newObject(\AkismetForm::class, $params);

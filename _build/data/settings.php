@@ -21,4 +21,8 @@ return [
         'area' => 'configuration',
         'value' => '30',
     ],
+    'debug' => [
+        'area' => 'configuration',
+        'value' => false,
+    ],
 ];
