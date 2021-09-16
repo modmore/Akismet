@@ -34,8 +34,8 @@ try {
             $values = $hook->getValues();
             break;
         case quipHooks::class:
-            $values = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $config = $hook->quip->config;
+            $values = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             break;
         default:
             $modx->log(modX::LOG_LEVEL_ERROR, '[Akismet] Invalid hook provided when attempting to analyse spam. Submitting form without a spam check...');
