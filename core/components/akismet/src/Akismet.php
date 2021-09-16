@@ -168,8 +168,8 @@ class Akismet {
             // If a honeypot field is in use, include the name and value
             if ($fields['akismetHoneypotField']) {
                 $params['honeypot_field_name'] = $fields['honeypot_field_name'];
-                $params['honeypot_field_value'] = $fields['akismetHoneypotField'];
-                $params[$fields['honeypot_field_name']] = $fields['akismetHoneypotField'];
+                $params['honeypot_field_value'] = $this->values[$fields['akismetHoneypotField']] ?? '';
+                $params[$fields['honeypot_field_name']] = $params['honeypot_field_value'];
             }
         }
 
