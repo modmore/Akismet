@@ -59,3 +59,21 @@
 .data-column li {
     margin-bottom:5px;
 }
+.akismet-home-stat {
+    display: block;
+    text-align: center;
+    font-size: 2.5rem;
+    color: #234368;
+    line-height: 1em;
+    margin-top: 1rem;
+}
+.akismet-home-statlabel {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    padding: 0.5em;
+    font-weight: bold;
+    color: rgba(35, 67, 104, 0.88);
+    margin-bottom: 1rem;
+}

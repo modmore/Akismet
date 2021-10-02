@@ -40,6 +40,9 @@ $_lang['akismet.charset'] = 'Site Charset';
 $_lang['akismet.site_lang'] = 'Language';
 $_lang['akismet.recheck_reason'] = 'Recheck Reason';
 $_lang['akismet.updated_at'] = 'Updated at';
+$_lang['akismet.spam_blocked'] = 'Spam blocked';
+$_lang['akismet.real_messages'] = 'Real messages';
+$_lang['akismet.spam_percentage'] = 'Spam percentage';
 
 // Front-end default
 $_lang['akismet.message_blocked'] = 'Your message was blocked by our spam filter. If this was incorrect, please contact customer support.';
@@ -52,3 +55,7 @@ $_lang['setting_akismet.assets_url'] = 'Assets URL';
 $_lang['setting_akismet.core_path'] = 'Core Path';
 $_lang['setting_akismet.cleanup_days_old'] = 'Clean Up Old Records';
 $_lang['setting_akismet.cleanup_days_old_desc'] = 'Akismet will remove records older than the number of days set here. A value of 0 will prevent records from ever being removed.';
+$_lang['setting_akismet.total_spam'] = 'Total Spam Count';
+$_lang['setting_akismet.total_spam_desc'] = '<b>Do not edit.</b> This setting will automatically get incremented each time Akismet indicates a submission is spam.';
+$_lang['setting_akismet.total_ham'] = 'Total Ham Count';
+$_lang['setting_akismet.total_ham_desc'] = '<b>Do not edit.</b> This setting will automatically get incremented each time Akismet indicates a submission is not spam.';

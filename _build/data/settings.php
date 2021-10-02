@@ -25,4 +25,12 @@ return [
         'area' => 'configuration',
         'value' => false,
     ],
+    'total_spam' => [
+        'area' => 'stats',
+        'value' => 0,
+    ],
+    'total_ham' => [
+        'area' => 'stats',
+        'value' => 0,
+    ],
 ];

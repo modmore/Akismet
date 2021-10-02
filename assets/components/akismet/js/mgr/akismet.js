@@ -11,6 +11,7 @@ Ext.extend(Akismet, Ext.Component, {
     combo: {},
     field: {},
     config: {},
+    stats: {},
 });
 Ext.reg('akismet', Akismet);
 Akismet = new Akismet();

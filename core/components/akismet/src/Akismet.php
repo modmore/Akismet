@@ -122,6 +122,7 @@ class Akismet {
         }
 
         $this->cleanup();
+        $this->countSpam($isSpam);
 
         return $isSpam;
     }
@@ -299,6 +300,19 @@ class Akismet {
                 $this->modx->log(modX::LOG_LEVEL_INFO, '[Akismet] Cleaned up ' . $count
                     . ' spam analysis records from before ' . date('Y-m-d H:i:s', $deleteBefore));
             }
+        }
+    }
+
+    private function countSpam(bool $isSpam)
+    {
+        $settingKey = $isSpam ? 'akismet.total_spam' : 'akismet.total_ham';
+        $setting = $this->modx->getObject('modSystemSetting', [ 'key' => $settingKey]);
+        if ($setting) {
+            $setting->set('value', $setting->get('value') + 1);
+            $setting->save();
+        }
+        else {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[Akismet] Could not find setting ' . $settingKey . ' to keep track of total number of spam/ham');
         }
     }
 }

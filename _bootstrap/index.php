@@ -126,6 +126,21 @@ $manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
 $manager->addField(\AkismetForm::class, 'honeypot_field_value');
 $manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
 
+
+$setting = $modx->getObject('modSystemSetting', [ 'key' => 'akismet.total_spam']);
+if ($setting && $setting->get('value') < 1) {
+    $count = $modx->getCount(AkismetForm::class, ['reported_status' => 'spam']);
+    $setting->set('value', $count);
+    $setting->save();
+}
+
+$setting = $modx->getObject('modSystemSetting', [ 'key' => 'akismet.total_ham']);
+if ($setting && $setting->get('value') < 1) {
+    $count = $modx->getCount(AkismetForm::class, ['reported_status' => 'notspam']);
+    $setting->set('value', $count);
+    $setting->save();
+}
+
 // Clear the cache
 $modx->cacheManager->refresh();
 

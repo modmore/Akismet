@@ -181,6 +181,11 @@ $attr = [
 ];
 
 $vehicle = $builder->createVehicle($category,$attr);
+
+$vehicle->resolve('php', [
+    'source' => $sources['resolvers'] . 'counter.resolver.php',
+]);
+
 $builder->putVehicle($vehicle);
 
 /* now pack in the license file, readme and setup options */
