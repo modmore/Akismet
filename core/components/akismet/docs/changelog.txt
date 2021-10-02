@@ -1,3 +1,7 @@
+Akismet 1.2.0-pl
+---------------------------------
+Released on 2021-10-02
+
 - Track total spam/real messages and spam percentage, and show in component
 
 Akismet 1.1.0-pl
