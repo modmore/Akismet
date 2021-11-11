@@ -1,3 +1,9 @@
+Akismet 1.2.1-pl
+---------------------------------
+Released on
+
+- Avoid division by zero on CMP if there are no stats yet
+
 Akismet 1.2.0-pl
 ---------------------------------
 Released on 2021-10-02

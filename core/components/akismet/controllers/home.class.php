@@ -50,7 +50,7 @@ class AkismetHomeManagerController extends modExtraManagerController
         return [
             'spam' => number_format($spam),
             'ham' => number_format($ham),
-            'spam_rate' => number_format(($spam / ($spam + $ham)) * 100) . '%',
+            'spam_rate' => $spam ? number_format(($spam / ($spam + $ham)) * 100) . '%' : '0%',
         ];
     }
 
