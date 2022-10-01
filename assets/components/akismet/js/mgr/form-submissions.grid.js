@@ -3,7 +3,7 @@ Akismet.grid.FormSubmissions = function (config) {
     Ext.applyIf(config, {
         id: 'akismet-grid-form-submissions',
         url: Akismet.config.connectorUrl,
-        baseParams: { action: 'mgr/form-submissions/getList' },
+        baseParams: { action: 'mgr/form-submissions/getlist' },
         fields: [
             'id',
             'created_at',
