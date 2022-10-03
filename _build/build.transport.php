@@ -23,7 +23,7 @@ if (!defined('MOREPROVIDER_BUILD')) {
     /* define version */
     define('PKG_NAME', 'Akismet');
     define('PKG_NAMESPACE', 'akismet');
-    define('PKG_VERSION', '1.2.1');
+    define('PKG_VERSION', '1.3.0');
     define('PKG_RELEASE', 'pl');
 
     /* load modx */
@@ -187,6 +187,22 @@ $vehicle->resolve('php', [
 ]);
 
 $builder->putVehicle($vehicle);
+
+/* Load Dashboard Widgets */
+$modx->log(modX::LOG_LEVEL_INFO,'Packaging in Dashboard Widgets...');
+$widgets = include $sources['data'].'transport.dashboard_widgets.php';
+if (empty($widgets)) $modx->log(modX::LOG_LEVEL_ERROR,'Could not package in widgets.');
+$attributes = [
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::UNIQUE_KEY => ['name'],
+];
+foreach ($widgets as $widget) {
+    $vehicle = $builder->createVehicle($widget,$attributes);
+    $builder->putVehicle($vehicle);
+}
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in '.count($widgets).' widgets.'); flush();
+unset($widgets, $widget, $attributes);
 
 /* now pack in the license file, readme and setup options */
 $builder->setPackageAttributes([
