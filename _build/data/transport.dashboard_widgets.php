@@ -9,8 +9,6 @@
  *
  */
 
-use MODX\Revolution\modDashboardWidget;
-
 // Use different base paths if we're bootstrapping rather than building.
 if (isset($componentPath)) {
     $basePath = $componentPath . '/core/';
@@ -26,7 +24,7 @@ $widgets[0]->fromArray([
     'description' => 'akismet.widget.menu_desc',
     'type' => 'file',
     'size' => 'one-third',
-    'content' => $basePath . 'components/akismet/elements/widgets/akismetstats.widget.php',
+    'content' => $basePath . 'components/akismet/elements/widgets/akismetstats.class.php',
     'namespace' => 'akismet',
     'lexicon' => 'akismet:default',
 ], '', true, true);

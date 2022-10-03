@@ -1,8 +1,6 @@
 <?php
 /* Get the core config */
 
-use MODX\Revolution\modDashboardWidget;
-
 $componentPath = dirname(__DIR__);
 if (!file_exists($componentPath.'/config.core.php')) {
     die('ERROR: missing '.$componentPath.'/config.core.php file defining the MODX core path.');
