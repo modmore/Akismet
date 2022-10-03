@@ -83,6 +83,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 .akismet-widget .akismet-stats-block {
     width: 50%;

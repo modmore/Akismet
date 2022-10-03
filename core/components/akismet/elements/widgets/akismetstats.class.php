@@ -37,6 +37,11 @@ Ext.onReady(function() {
     Akismet.stats = {$this->modx->toJSON($this->stats)};
 });
 </script>
+<style>
+    #dashboard-block-{$this->widget->get('id')} .body {
+        height: 100%;
+    }
+</style>
 HTML
         );
     }
