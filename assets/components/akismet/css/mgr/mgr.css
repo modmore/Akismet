@@ -77,3 +77,70 @@
     color: rgba(35, 67, 104, 0.88);
     margin-bottom: 1rem;
 }
+
+/* Widget */
+.akismet-widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.akismet-widget .akismet-stats-block {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+.akismet-widget .akismet-chart {
+    flex-shrink: 1;
+    width: 50%;
+    padding-right: 15px;
+}
+.akismet-widget .akismet-stats-col {
+    flex: 1;
+    text-transform: uppercase;
+    color: #666;
+}
+.akismet-circular-chart {
+    display: block;
+    margin: 10px auto;
+    max-width: 80%;
+    max-height: 250px;
+}
+.akismet-circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+}
+.akismet-circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+}
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+.akismet-circular-chart.blue .akismet-circle {
+    stroke: #3c9ee5;
+}
+.akismet-chart .akismet-spam-percentage {
+    fill: #666;
+    font-size: 0.5em;
+    text-anchor: middle;
+}
+.akismet-chart .akismet-spam-percentage-text {
+    fill: #666;
+    font-size: 0.2em;
+    text-anchor: middle;
+    text-transform: uppercase;
+}
+.akismet-stats-block .stat {
+    color: #234368;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-right: 6px;
+}

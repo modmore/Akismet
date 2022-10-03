@@ -24,7 +24,7 @@ class AkismetHomeManagerController extends modExtraManagerController
         $this->addHtml('<script type="text/javascript">
             Ext.onReady(function() {
                 Akismet.config = '.$this->modx->toJSON($this->akismet->config).';
-                Akismet.stats = '. $this->modx->toJSON($this->getStats()) . ';
+                Akismet.stats = '. $this->modx->toJSON($this->akismet->getStats()) . ';
             });
             </script>');
     }
@@ -41,26 +41,6 @@ class AkismetHomeManagerController extends modExtraManagerController
     public function getTemplateFile()
     {
         return $this->akismet->config['templatesPath'] . 'home.tpl';
-    }
-
-    private function getStats(): array
-    {
-        $spam = $this->_getStat('spam');
-        $ham = $this->_getStat('ham');
-        return [
-            'spam' => number_format($spam),
-            'ham' => number_format($ham),
-            'spam_rate' => $spam ? number_format(($spam / ($spam + $ham)) * 100) . '%' : '0%',
-        ];
-    }
-
-    private function _getStat(string $key): int
-    {
-        $setting = $this->modx->getObject('modSystemSetting', [ 'key' => "akismet.total_{$key}"]);
-        if ($setting) {
-            return (int)$setting->get('value');
-        }
-        return 0;
     }
 
 }

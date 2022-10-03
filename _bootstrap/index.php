@@ -1,5 +1,8 @@
 <?php
 /* Get the core config */
+
+use MODX\Revolution\modDashboardWidget;
+
 $componentPath = dirname(__DIR__);
 if (!file_exists($componentPath.'/config.core.php')) {
     die('ERROR: missing '.$componentPath.'/config.core.php file defining the MODX core path.');
@@ -140,6 +143,17 @@ if ($setting && $setting->get('value') < 1) {
     $setting->set('value', $count);
     $setting->save();
 }
+
+// Widgets
+$widgets = include $componentPath . '/_build/data/transport.dashboard_widgets.php';
+if (empty($widgets)) $modx->log(modX::LOG_LEVEL_ERROR,'Could not create widgets.');
+foreach ($widgets as $key => $obj) {
+    /** @var modDashboardWidget $obj */
+    if (!createObject(modDashboardWidget::class, $obj->toArray(), 'name', false)) {
+        echo "Error creating ".$obj->get('name')." widget.\n";
+    }
+}
+
 
 // Clear the cache
 $modx->cacheManager->refresh();

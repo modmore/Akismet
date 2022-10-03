@@ -9,6 +9,11 @@ class Akismet {
     /** @var array $config */
     public $config = [];
 
+    /**
+     * The version string, used for cache busting and should be increased with each release.
+     */
+    const VERSION = '1.3.0-pl';
+
     public function __construct(modX $modx, array $config = [])
     {
         $this->modx = $modx;
@@ -33,5 +38,25 @@ class Akismet {
         ], $config);
 
         $this->modx->addPackage('akismet', $this->config['modelPath']);
+    }
+
+    public function getStats(): array
+    {
+        $spam = $this->_getStat('spam');
+        $ham = $this->_getStat('ham');
+        return [
+            'spam' => number_format($spam),
+            'ham' => number_format($ham),
+            'spam_rate' => $spam ? number_format(($spam / ($spam + $ham)) * 100) . '%' : '0%',
+        ];
+    }
+
+    private function _getStat(string $key): int
+    {
+        $setting = $this->modx->getObject('modSystemSetting', [ 'key' => "akismet.total_{$key}"]);
+        if ($setting) {
+            return (int)$setting->get('value');
+        }
+        return 0;
     }
 }

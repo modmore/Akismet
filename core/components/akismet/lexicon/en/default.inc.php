@@ -2,6 +2,8 @@
 
 $_lang['akismet'] = 'Akismet: Spam Protection';
 $_lang['akismet.menu_desc'] = 'Block spam efficiently and easily using Akismet.';
+$_lang['akismet.widget.menu_name'] = 'Akismet: Spam Statistics';
+$_lang['akismet.widget.menu_desc'] = 'Display incoming spam statistics in your dashboard.';
 $_lang['akismet.description'] = 'Akismet has analysed your form submissions. You can verify the analysis is accurate, and override the result using the button on each row if incorrect. ';
 $_lang['akismet.forms'] = 'Forms';
 $_lang['akismet.form_submissions'] = 'Form Submissions';
