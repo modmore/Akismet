@@ -298,7 +298,7 @@ class Akismet {
                     'created_at:<' => $deleteBefore
                 ]);
                 $this->modx->log(modX::LOG_LEVEL_INFO, '[Akismet] Cleaned up ' . $count
-                    . ' spam analysis records from before ' . date('Y-m-d H:i:s', $deleteBefore));
+                    . ' spam analysis records from before ' . $deleteBefore);
             }
         }
     }
