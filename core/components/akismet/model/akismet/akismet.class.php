@@ -12,7 +12,7 @@ class Akismet {
     /**
      * The version string, used for cache busting and should be increased with each release.
      */
-    const VERSION = '1.3.0-pl';
+    const VERSION = '1.3.1-pl';
 
     public function __construct(modX $modx, array $config = [])
     {
