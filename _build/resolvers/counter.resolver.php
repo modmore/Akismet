@@ -25,6 +25,20 @@ if ($transport->xpdo) {
                 $setting->save();
             }
 
+            // Fix dashboard widget sizing in MODX 2.x for previous installs
+            $modxVersion = $modx->getVersionData();
+            if (version_compare($modxVersion['full_version'], '3.0.0-dev', '<')) {
+                $widgets = $modx->getCollection(modDashboardWidget::class, [
+                    'namespace' => 'akismet',
+                ]);
+                foreach ($widgets as $widget) {
+                    if ($widget->get('size') === 'one-third') {
+                        $widget->set('size', 'half');
+                        $widget->save();
+                    }
+                }
+            }
+
             break;
     }
 }
