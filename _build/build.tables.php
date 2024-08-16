@@ -13,8 +13,6 @@ if (!XPDO_CLI_MODE) {
 
 $path = $modx->getOption('akismet.core_path'). 'model/';
 $modx->addPackage('akismet', $path);
-
-$modx->setLogTarget();
 $manager = $modx->getManager();
 
 $tables = [
@@ -30,11 +28,15 @@ foreach ($tables as $object) {
     }
 }
 
+// Temporarily change logging level to ignore duplicate column errors
+$oldLevel = $modx->setLogLevel(modX::LOG_LEVEL_FATAL);
+
 $manager->addField(\AkismetForm::class, 'honeypot_field_name');
 $manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
 $manager->addField(\AkismetForm::class, 'honeypot_field_value');
 $manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
 
+$modx->setLogLevel($oldLevel);
 $modx->log(modX::LOG_LEVEL_INFO, 'Complete!');
 if (!XPDO_CLI_MODE) {
     echo '</pre>';

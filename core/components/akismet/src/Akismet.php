@@ -29,24 +29,12 @@ class Akismet {
     public function __construct(modX $modx)
     {
         $this->modx = $modx;
-        $this->apiKey = $this->_loadAPIKey();
+        $this->apiKey = $this->modx->getOption('akismet.api_key', '');;
         $this->modx->lexicon->load('akismet:default');
         // Load xPDO package
         if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {
             throw new xPDOException('Unable to load Akismet xPDO package!');
         }
-    }
-
-    /**
-     * @throws InvalidAPIKeyException
-     */
-    private function _loadAPIKey(): string
-    {
-        $apiKey = $this->modx->getOption('akismet.api_key');
-        if (!$apiKey) {
-            throw new InvalidAPIKeyException('Invalid API Key.');
-        }
-        return $apiKey;
     }
 
     /**
@@ -94,9 +82,14 @@ class Akismet {
      *      When null, $values should have the akismet field names (comment_author, comment_content, etc)
      * @return bool True if spam, false if not.
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws InvalidAPIKeyException
      */
     public function checkSpam(array $values, $hookConfig = null): bool
     {
+        if (!$this->apiKey) {
+            throw new InvalidAPIKeyException('Missing API key...');
+        }
+
         $this->values = $values;
         $this->hookConfig = $hookConfig;
 
@@ -201,9 +194,14 @@ class Akismet {
      * @param array $params
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws InvalidAPIKeyException
      */
     public function submitSpam(array $params): bool
     {
+        if (!$this->apiKey) {
+            throw new InvalidAPIKeyException('Missing API key...');
+        }
+
         if ($params['honeypot_field_name']) {
             $params[$params['honeypot_field_name']] = $params['honeypot_field_value'];
             unset($params['honeypot_field_value']);
@@ -226,9 +224,14 @@ class Akismet {
      * @param array $params
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws InvalidAPIKeyException
      */
     public function submitHam(array $params): bool
     {
+        if (!$this->apiKey) {
+            throw new InvalidAPIKeyException('Missing API key...');
+        }
+
         if ($params['honeypot_field_name']) {
             $params[$params['honeypot_field_name']] = $params['honeypot_field_value'];
             unset($params['honeypot_field_value']);

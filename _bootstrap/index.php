@@ -11,6 +11,7 @@ echo "<pre>";
 echo "Loading modX...\n";
 require_once $componentPath . '/config.core.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+/** @var \modX|\MODX\Revolution\modX $modx */
 $modx = new modX();
 echo "Initializing manager...\n";
 $modx->initialize('mgr');
@@ -117,8 +118,11 @@ if (!$modx->addPackage('akismet', $componentPath . '/core/components/akismet/mod
 }
 
 $manager = $modx->getManager();
-$manager->createObjectContainer(AkismetForm::class);
 
+// Temporarily change logging level to ignore duplicate column errors
+$oldLevel = $modx->setLogLevel(modX::LOG_LEVEL_FATAL);
+
+$manager->createObjectContainer(AkismetForm::class);
 
 $manager->alterField(AkismetForm::class, 'user_ip');
 
@@ -127,6 +131,7 @@ $manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
 $manager->addField(\AkismetForm::class, 'honeypot_field_value');
 $manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
 
+$modx->setLogLevel($oldLevel);
 
 $setting = $modx->getObject('modSystemSetting', [ 'key' => 'akismet.total_spam']);
 if ($setting && $setting->get('value') < 1) {
@@ -158,7 +163,6 @@ $modx->cacheManager->refresh();
 
 echo "Done.";
 
-
 /**
  * Creates an object.
  *
@@ -167,6 +171,7 @@ echo "Done.";
  * @param string $primaryField
  * @param bool $update
  * @return bool
+ * @throws \xPDO\xPDOException
  */
 function createObject ($className = '', array $data = array(), $primaryField = '', $update = true) {
     global $modx;
