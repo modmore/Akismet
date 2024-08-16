@@ -24,12 +24,12 @@ class Akismet {
     private $apiKey;
 
     /**
-     * @throws InvalidAPIKeyException|xPDOException
+     * @throws xPDOException
      */
     public function __construct(modX $modx)
     {
         $this->modx = $modx;
-        $this->apiKey = $this->modx->getOption('akismet.api_key', '');;
+        $this->apiKey = $this->modx->getOption('akismet.api_key', '');
         $this->modx->lexicon->load('akismet:default');
         // Load xPDO package
         if (!$this->modx->addPackage('akismet', dirname(__DIR__) . '/model/')) {

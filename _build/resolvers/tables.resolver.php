@@ -15,12 +15,15 @@ if ($transport->xpdo) {
             $manager = $modx->getManager();
             $manager->createObjectContainer(AkismetForm::class);
 
+            // Temporarily change logging level to ignore duplicate column errors
+            $oldLevel = $modx->setLogLevel(modX::LOG_LEVEL_FATAL);
             $manager->alterField(AkismetForm::class, 'user_ip');
 
             $manager->addField(\AkismetForm::class, 'honeypot_field_name');
             $manager->addIndex(\AkismetForm::class, 'honeypot_field_name');
             $manager->addField(\AkismetForm::class, 'honeypot_field_value');
             $manager->addIndex(\AkismetForm::class, 'honeypot_field_value');
+            $modx->setLogLevel($oldLevel);
             break;
     }
 }

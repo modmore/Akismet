@@ -23,7 +23,7 @@ $widgets[0]->fromArray([
     'name' => 'akismet.widget.menu_name',
     'description' => 'akismet.widget.menu_desc',
     'type' => 'file',
-    'size' => 'one-third',
+    'size' => 'half',
     'content' => $basePath . 'components/akismet/elements/widgets/akismetstats.class.php',
     'namespace' => 'akismet',
     'lexicon' => 'akismet:default',
