@@ -68,7 +68,7 @@ class Akismet {
         }
 
         // If a honeypot field is in use, add the field name
-        if (isset($this->hookConfig['akismetHoneypotField'])) {
+        if (!empty($this->hookConfig['akismetHoneypotField'])) {
             $fields['honeypot_field_name'] = $this->hookConfig['akismetHoneypotField'];
         }
 
@@ -160,7 +160,7 @@ class Akismet {
             ]);
 
             // If a honeypot field is in use, include the name and value
-            if (isset($fields['akismetHoneypotField'])) {
+            if (!empty($fields['akismetHoneypotField'])) {
                 $params['honeypot_field_name'] = $fields['honeypot_field_name'];
                 $params['honeypot_field_value'] = $this->values[$fields['akismetHoneypotField']] ?? '';
                 $params[$fields['honeypot_field_name']] = $params['honeypot_field_value'];
